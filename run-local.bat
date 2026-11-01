@@ -4,14 +4,14 @@ cd /d "%~dp0"
 
 where node >nul 2>nul
 if %ERRORLEVEL% EQU 0 (
-    echo Starting Studio Audiobook Player using Node.js...
+    echo Starting epubfm using Node.js...
     node server.js --open
     goto :eof
 )
 
 where python >nul 2>nul
 if %ERRORLEVEL% EQU 0 (
-    echo Starting Studio Audiobook Player using Python http.server on http://localhost:8080 ...
+    echo Starting epubfm using Python http.server on http://localhost:8080 ...
     start "" "http://localhost:8080"
     python -m http.server 8080 --bind 127.0.0.1
     goto :eof

@@ -1,7 +1,7 @@
 {
-  "name": "Studio Audiobook Player & MP3 Converter",
-  "short_name": "Audiobook",
-  "description": "Interactive audiobook reader and MP3 converter with local library and live word highlighting.",
+  "name": "epubfm - Audiobook Player & MP3 Converter",
+  "short_name": "epubfm",
+  "description": "epubfm - Interactive audiobook reader and MP3 converter with local library and live word highlighting.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",

@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Studio Audiobook Player &amp; MP3 Converter</title>
+    <title>epubfm - Audiobook Player &amp; MP3 Converter</title>
     <!-- PWA Primary Meta Tags -->
     <meta name="theme-color" content="#0f172a">
-    <meta name="description" content="Interactive audiobook reader and MP3 converter with local library and live word highlighting.">
+    <meta name="description" content="epubfm - Interactive audiobook reader and MP3 converter with local library and live word highlighting.">
     <!-- PWA Manifest & Icons -->
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/svg+xml" href="icon.svg">
@@ -14,7 +14,7 @@
     <link rel="apple-touch-icon" href="icon-192.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Audiobook">
+    <meta name="apple-mobile-web-app-title" content="epubfm">
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts: Inter & Merriweather for comfortable reading -->
@@ -133,15 +133,11 @@
     <header class="bg-slate-900/90 backdrop-blur border-b border-slate-800 sticky top-0 z-30 px-4 sm:px-6 py-3.5">
         <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-4">
             <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/20">
-                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                    </svg>
-                </div>
+                <img src="icon-192.png" alt="epubfm logo" class="w-10 h-10 rounded-xl shadow-lg shadow-indigo-500/20 object-cover border border-slate-700/50">
                 <div>
                     <div class="flex items-center gap-2">
-                        <h1 class="text-lg sm:text-xl font-bold bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">Studio Audiobook Player</h1>
-                        <span class="text-[11px] font-semibold uppercase tracking-wider px-2 py-0.5 bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 rounded-full">EPUB + PDF + MP3</span>
+                        <h1 class="text-lg sm:text-xl font-bold bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">epubfm</h1>
+                        <span class="text-[11px] font-semibold uppercase tracking-wider px-2 py-0.5 bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 rounded-full">Audiobook + MP3</span>
                     </div>
                     <p id="book-title-display" class="text-xs text-slate-400 truncate max-w-xs sm:max-w-md">No book loaded</p>
                 </div>
@@ -160,7 +156,7 @@
                     <span id="zen-btn-label">Zen Mode</span>
                 </button>
 
-                <button id="pwa-install-btn" class="hidden bg-slate-800 hover:bg-slate-700 text-indigo-300 border border-slate-700 hover:border-indigo-500/50 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium transition items-center gap-1.5 shadow-sm" title="Install Studio Audiobook Player as a standalone application">
+                <button id="pwa-install-btn" class="hidden bg-slate-800 hover:bg-slate-700 text-indigo-300 border border-slate-700 hover:border-indigo-500/50 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium transition items-center gap-1.5 shadow-sm" title="Install epubfm as a standalone application">
                     <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
                     <span>Install App</span>
                 </button>
@@ -2197,7 +2193,7 @@
                 pwaInstallBtn.classList.add('hidden');
                 pwaInstallBtn.classList.remove('flex');
             }
-            setStatus('Studio Audiobook Player app installed successfully!', 'ready');
+            setStatus('epubfm app installed successfully!', 'ready');
         });
     </script>
 </body>

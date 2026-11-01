@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Zero-dependency local static server for Studio Audiobook Player (epubfm).
+ * Zero-dependency local static server for epubfm.
  * Mirrors GitHub Pages behavior locally, supporting ?book=<filename.epub|pdf|txt>
  * and providing a secure context (http://localhost) for Web Speech, PDF.js, and Web Audio APIs.
  */
@@ -120,7 +120,7 @@ function startServer(port) {
     server.listen(port, '127.0.0.1', () => {
         const url = `http://localhost:${port}`;
         console.log('============================================================');
-        console.log('  Studio Audiobook Player & MP3 Converter (Local Server)');
+        console.log('  epubfm - Audiobook Player & MP3 Converter (Local Server)');
         console.log('============================================================');
         console.log(`  Local URL:   ${url}`);
 

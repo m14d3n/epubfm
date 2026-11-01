@@ -1,9 +1,9 @@
 /**
- * Service Worker for Studio Audiobook Player & MP3 Converter (epubfm)
+ * Service Worker for epubfm (PWA)
  * Enables offline PWA capabilities and fast asset loading.
  */
 
-const CACHE_NAME = 'epubfm-pwa-v1';
+const CACHE_NAME = 'epubfm-pwa-v2';
 const CORE_ASSETS = [
     './',
     './index.html',

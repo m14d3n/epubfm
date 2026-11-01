@@ -1,4 +1,4 @@
-# Studio Audiobook Player & MP3 Converter (`epubfm`)
+# epubfm - Audiobook Player & MP3 Converter
 
 A **100% client-side, zero-backend web application** that turns `.epub`, `.pdf`, and `.txt` books into an interactive audiobook reader with real-time word-boundary highlighting, persistent playback history/bookmarks, and in-browser `.mp3` audiobook export.
 
@@ -139,7 +139,7 @@ All application logic, styles, and UI components live in [`index.html`](./index.
 
 ```text
 epubfm/
-├── index.html       # Complete single-file Studio Audiobook Player & MP3 Converter
+├── index.html       # Complete single-file epubfm web application
 ├── server.js        # Zero-dependency Node.js local static HTTP server
 ├── package.json     # npm scripts (`npm start`, `npm run serve`)
 ├── run-local.bat    # Windows Command Prompt / double-click launcher

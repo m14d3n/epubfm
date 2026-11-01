@@ -1,7 +1,7 @@
 #!/usr/bin/env pwsh
 <#
 .SYNOPSIS
-    Launches Studio Audiobook Player (epubfm) on a local HTTP server and opens it in the browser.
+    Launches epubfm on a local HTTP server and opens it in the browser.
 .PARAMETER Port
     Port number to serve on (default: 8080).
 .PARAMETER NoOpen
@@ -26,7 +26,7 @@ if (Get-Command node -ErrorAction SilentlyContinue) {
 }
 elseif (Get-Command python -ErrorAction SilentlyContinue) {
     $url = "http://localhost:$Port"
-    Write-Host "Starting Studio Audiobook Player via Python on $url ..." -ForegroundColor Cyan
+    Write-Host "Starting epubfm via Python on $url ..." -ForegroundColor Cyan
     if (-not $NoOpen) {
         Start-Process $url
     }

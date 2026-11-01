@@ -1,7 +1,7 @@
 {
   "name": "epubfm",
   "version": "1.0.0",
-  "description": "Studio Audiobook Player & MP3 Converter — 100% client-side EPUB, PDF & TXT interactive reader, text-to-speech audiobook player, and MP3 exporter for GitHub Pages and local use.",
+  "description": "epubfm — 100% client-side EPUB, PDF & TXT interactive reader, text-to-speech audiobook player, and MP3 exporter for GitHub Pages and local use.",
   "main": "server.js",
   "scripts": {
     "start": "node server.js --open",
