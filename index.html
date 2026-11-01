@@ -69,7 +69,7 @@
                         <h1 class="text-lg sm:text-xl font-bold bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">Studio Audiobook Player</h1>
                         <span class="text-[11px] font-semibold uppercase tracking-wider px-2 py-0.5 bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 rounded-full">EPUB + PDF + MP3</span>
                     </div>
-                    <p id="book-title-display" class="text-xs text-slate-400 truncate max-w-xs sm:max-w-md">Dolly Little: Book 2 — The Stars of Messier 104</p>
+                    <p id="book-title-display" class="text-xs text-slate-400 truncate max-w-xs sm:max-w-md">No book loaded</p>
                 </div>
             </div>
 
@@ -253,17 +253,7 @@
                         <label for="text-input" class="text-xs font-semibold uppercase tracking-wider text-slate-400">Raw Book Text / Editor</label>
                         <span id="word-count-badge" class="text-[11px] text-slate-400">0 words</span>
                     </div>
-                    <textarea id="text-input" class="flex-1 bg-slate-950 border border-slate-800 rounded-xl p-3 text-slate-300 text-xs focus:outline-none focus:border-indigo-500 resize-none leading-relaxed" placeholder="Paste chapters or upload an EPUB/PDF above...">Dolly Little: Book 2 — The Stars of Messier 104
-
-Chapter 1: The Sombrero Galaxy Signal
-
-Far beyond the dusty spiral arms of the Milky Way, nearly thirty million light-years toward the constellation Virgo, lies Messier 104—the Sombrero Galaxy. To most astronomers on Earth, its brilliant white core and dark, wide-brimmed dust lane were merely a cosmic curiosity. To Dolly Little, however, the faint rhythmic pulse emerging from its halo was an unmistakable invitation.
-
-She adjusted the brass vernacular dials of her attic observatory, watching the amber needles quiver in time with the deep-space telemetry. Every seventy-two seconds, a packet of harmonic frequencies cascaded through her receiver, translating into coordinates that no terrestrial star chart had ever cataloged.
-
-"You're not natural pulsar noise, are you?" Dolly whispered, tapping her pencil against her logbook. If her calculations held true, the transmission had been traveling across the intergalactic void long before humanity first looked up at the night sky.
-
-Upload your own EPUB or PDF file using the button in the top bar, or click any paragraph in the reader to immediately jump playback to that exact position. Every time you start, pause, or stop, your position is automatically logged in the Play History panel on the right!</textarea>
+                    <textarea id="text-input" class="flex-1 bg-slate-950 border border-slate-800 rounded-xl p-3 text-slate-300 text-xs focus:outline-none focus:border-indigo-500 resize-none leading-relaxed" placeholder="Paste chapters or upload an EPUB/PDF above..."></textarea>
                     <button id="load-text-btn" class="mt-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-indigo-300 py-2 rounded-xl text-xs font-semibold transition">
                         Update Reader from Text Box →
                     </button>
@@ -409,8 +399,8 @@ Upload your own EPUB or PDF file using the button in the top bar, or click any p
         let paragraphs = [];
         let currentIndex = 0;
         let isPlaying = false;
-        let currentBookId = 'dolly-little-book-2';
-        let currentBookTitle = 'Dolly Little: Book 2 — The Stars of Messier 104';
+        let currentBookId = '';
+        let currentBookTitle = 'No book loaded';
         let playHistory = [];
 
         const STORAGE_KEY_HISTORY = 'studio_audiobook_history_v2';
@@ -647,23 +637,39 @@ Upload your own EPUB or PDF file using the button in the top bar, or click any p
             synth.cancel();
             isPlaying = false;
             updatePlayButtonUI(false);
-            currentBookTitle = title;
-            currentBookId = title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+            currentBookTitle = title || 'No book loaded';
+            currentBookId = currentBookTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-');
             bookTitleDisplay.textContent = currentBookTitle;
 
             readerDisplay.innerHTML = '';
-            paragraphs = rawText
+            paragraphs = (rawText || '')
                 .split(/\n+/)
                 .map(p => p.trim())
                 .filter(p => p.length > 0);
 
-            const totalWords = rawText.trim() ? rawText.trim().split(/\s+/).length : 0;
+            const totalWords = (rawText || '').trim() ? rawText.trim().split(/\s+/).length : 0;
             wordCountBadge.textContent = `${totalWords.toLocaleString()} words`;
 
             progressScrubber.max = Math.max(0, paragraphs.length - 1);
             jumpInput.max = Math.max(1, paragraphs.length);
             document.getElementById('mp3-end-para').max = Math.max(1, paragraphs.length);
             document.getElementById('mp3-end-para').value = Math.min(10, Math.max(1, paragraphs.length));
+
+            if (!paragraphs.length) {
+                readerDisplay.innerHTML = `
+                    <div class="h-64 flex flex-col items-center justify-center text-center p-8 text-slate-500">
+                        <svg class="w-12 h-12 mb-3 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                        </svg>
+                        <p class="text-sm font-medium text-slate-400">No book loaded</p>
+                        <p class="text-xs text-slate-500 mt-1">Upload an EPUB, PDF, or TXT file above, or paste chapters into the editor.</p>
+                    </div>
+                `;
+                currentIndex = 0;
+                updateProgressUI();
+                setStatus('Ready. Upload an EPUB, PDF, or TXT book to begin.', 'ready');
+                return;
+            }
 
             paragraphs.forEach((text, index) => {
                 const p = document.createElement('div');
@@ -703,7 +709,12 @@ Upload your own EPUB or PDF file using the button in the top bar, or click any p
             synth.cancel();
 
             if (!paragraphs.length) {
-                loadTextIntoReader(textInput.value);
+                if (textInput.value.trim()) {
+                    loadTextIntoReader(textInput.value);
+                } else {
+                    setStatus('No paragraphs to read. Please upload or paste a book first.', 'error');
+                    return;
+                }
             }
 
             if (currentIndex >= paragraphs.length) {
@@ -813,7 +824,15 @@ Upload your own EPUB or PDF file using the button in the top bar, or click any p
         }
 
         function updateProgressUI() {
-            const total = paragraphs.length || 1;
+            if (!paragraphs.length) {
+                currentPosDisplay.textContent = 'Paragraph 0 of 0 (0%)';
+                progressScrubber.value = 0;
+                jumpInput.value = 0;
+                estTimeDisplay.textContent = 'Estimated remaining: 0 mins';
+                return;
+            }
+
+            const total = paragraphs.length;
             const current = Math.min(currentIndex + 1, total);
             const pct = Math.round(((current - 1) / total) * 100);
             currentPosDisplay.textContent = `Paragraph ${current} of ${total} (${pct}%)`;
@@ -919,7 +938,11 @@ Upload your own EPUB or PDF file using the button in the top bar, or click any p
         });
 
         loadTextBtn.addEventListener('click', () => {
-            loadTextIntoReader(textInput.value, currentBookTitle);
+            const hasText = textInput.value.trim().length > 0;
+            const title = hasText
+                ? (currentBookTitle && currentBookTitle !== 'No book loaded' ? currentBookTitle : 'Custom Pasted Text')
+                : 'No book loaded';
+            loadTextIntoReader(textInput.value, title);
         });
 
         // Search Filter inside Reader
