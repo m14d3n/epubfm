@@ -21,6 +21,7 @@ const MIME_TYPES = {
     '.mjs': 'application/javascript; charset=utf-8',
     '.css': 'text/css; charset=utf-8',
     '.json': 'application/json; charset=utf-8',
+    '.webmanifest': 'application/manifest+json; charset=utf-8',
     '.txt': 'text/plain; charset=utf-8',
     '.md': 'text/markdown; charset=utf-8',
     '.epub': 'application/epub+zip',
@@ -87,6 +88,7 @@ const server = http.createServer((req, res) => {
             res.writeHead(200, {
                 'Content-Type': contentType,
                 'Access-Control-Allow-Origin': '*',
+                'Service-Worker-Allowed': '/',
                 'Cache-Control': 'no-cache'
             });
 

@@ -4,6 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Studio Audiobook Player &amp; MP3 Converter</title>
+    <!-- PWA Primary Meta Tags -->
+    <meta name="theme-color" content="#0f172a">
+    <meta name="description" content="Interactive audiobook reader and MP3 converter with local library and live word highlighting.">
+    <!-- PWA Manifest & Icons -->
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/svg+xml" href="icon.svg">
+    <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Audiobook">
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts: Inter & Merriweather for comfortable reading -->
@@ -147,6 +158,11 @@
                 <button id="zen-mode-btn" class="bg-slate-800 hover:bg-slate-700 text-indigo-300 border border-slate-700 hover:border-indigo-500/50 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium transition flex items-center gap-1.5 shadow-sm" title="Toggle Zen Reading Mode (Hotkey: Z)">
                     <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path></svg>
                     <span id="zen-btn-label">Zen Mode</span>
+                </button>
+
+                <button id="pwa-install-btn" class="hidden bg-slate-800 hover:bg-slate-700 text-indigo-300 border border-slate-700 hover:border-indigo-500/50 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium transition items-center gap-1.5 shadow-sm" title="Install Studio Audiobook Player as a standalone application">
+                    <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                    <span>Install App</span>
                 </button>
 
                 <button id="open-mp3-modal-btn" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium transition shadow-lg shadow-emerald-600/20 flex items-center gap-2">
@@ -2104,6 +2120,56 @@
             }
             loadSavedHistory();
         })();
+
+        // ==========================================
+        // PWA Service Worker & Install Prompt Logic
+        // ==========================================
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => {
+                        console.log('PWA Service Worker registered with scope:', reg.scope);
+                    })
+                    .catch(err => {
+                        console.warn('PWA Service Worker registration error:', err);
+                    });
+            });
+        }
+
+        let deferredInstallPrompt = null;
+        const pwaInstallBtn = document.getElementById('pwa-install-btn');
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredInstallPrompt = e;
+            if (pwaInstallBtn) {
+                pwaInstallBtn.classList.remove('hidden');
+                pwaInstallBtn.classList.add('flex');
+            }
+        });
+
+        if (pwaInstallBtn) {
+            pwaInstallBtn.addEventListener('click', async () => {
+                if (!deferredInstallPrompt) return;
+                deferredInstallPrompt.prompt();
+                const choice = await deferredInstallPrompt.userChoice;
+                if (choice.outcome === 'accepted') {
+                    console.log('User installed the PWA');
+                }
+                deferredInstallPrompt = null;
+                pwaInstallBtn.classList.add('hidden');
+                pwaInstallBtn.classList.remove('flex');
+            });
+        }
+
+        window.addEventListener('appinstalled', () => {
+            console.log('PWA installed successfully');
+            if (pwaInstallBtn) {
+                pwaInstallBtn.classList.add('hidden');
+                pwaInstallBtn.classList.remove('flex');
+            }
+            setStatus('Studio Audiobook Player app installed successfully!', 'ready');
+        });
     </script>
 </body>
 </html>

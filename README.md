@@ -35,6 +35,10 @@ Designed to run effortlessly both on **GitHub Pages** and **locally**.
 - **Two In-Browser MP3 Audiobook Export Modes**
   - **Option 1 — Fast Cloud TTS to MP3 Synthesis**: Splits your selected paragraph range into speech segments, fetches neural TTS MP3 streams (supporting English, Spanish, French, German, Italian, Portuguese, and Croatian), and merges them into a single downloadable `.mp3` file.
   - **Option 2 — Live System Voice Capture + LameJS Encoder**: Uses `navigator.mediaDevices.getDisplayMedia` (tab audio capture) and Web Audio API + [LameJS](https://github.com/zhuker/lamejs) to record your exact local system narrator voice and encode it into a 128kbps `.mp3` file directly in the browser.
+- **PWA Installation & Offline Support**
+  - **Installable Desktop & Mobile App**: Complies with Progressive Web App specifications (Web App Manifest + Service Worker). Install directly from Chrome, Edge, Safari, or mobile browsers, or via the in-app **Install App** button in the header.
+  - **Standalone Window Experience**: Runs in its own dedicated, chromeless desktop/mobile window like a native application with high-res app icons.
+  - **Offline Caching**: Service Worker (`sw.js`) pre-caches core runtime assets (Tailwind, JSZip, PDF.js, LameJS) so your local library and player work completely offline.
 - **Auto-Load Books via URL Parameter (`?book=`)**
   - Append `?book=yourbook.epub` (or `.pdf` / `.txt`) to the URL to automatically fetch and load a book hosted in the same repository/folder.
 
