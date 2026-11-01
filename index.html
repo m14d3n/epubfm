@@ -51,6 +51,69 @@
         ::-webkit-scrollbar-thumb:hover {
             background: rgba(148, 163, 184, 0.8);
         }
+
+        /* Collapsible Panels */
+        .panel-card.is-collapsed .panel-body {
+            display: none !important;
+        }
+        .panel-card.is-collapsed .panel-chevron {
+            transform: rotate(-90deg);
+        }
+
+        /* Collapsible Audio Deck */
+        #audio-deck.is-collapsed #audio-deck-body {
+            display: none !important;
+        }
+        #audio-deck.is-collapsed #audio-deck-mini {
+            display: flex !important;
+        }
+        #audio-deck.is-collapsed #collapse-audio-icon {
+            transform: rotate(180deg);
+        }
+
+        /* Collapsible Sidebar */
+        body.sidebar-collapsed #sidebar-column {
+            display: none !important;
+        }
+        body.sidebar-collapsed #reader-column {
+            grid-column: span 12 / span 12 !important;
+        }
+        body.sidebar-collapsed #expand-sidebar-btn {
+            display: inline-flex !important;
+        }
+
+        /* Zen Mode (Distraction-Free Reading Mode) */
+        body.zen-mode #audio-deck {
+            display: none !important;
+        }
+        body.zen-mode #sidebar-column {
+            display: none !important;
+        }
+        body.zen-mode #resume-banner {
+            display: none !important;
+        }
+        body.zen-mode #reader-column {
+            grid-column: span 12 / span 12 !important;
+            max-width: 58rem !important;
+            margin-left: auto !important;
+            margin-right: auto !important;
+            width: 100% !important;
+        }
+        body.zen-mode #reader-display {
+            height: calc(100vh - 180px) !important;
+            max-height: calc(100vh - 180px) !important;
+            font-size: 1.15rem !important;
+            line-height: 1.85 !important;
+            padding: 2.25rem !important;
+            border-color: rgba(99, 102, 241, 0.3) !important;
+            box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.7);
+        }
+        body.zen-mode #zen-floating-player {
+            display: flex !important;
+        }
+        body.zen-mode #expand-sidebar-btn {
+            display: none !important;
+        }
     </style>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col">
@@ -81,6 +144,11 @@
                     <input type="file" id="file-upload" accept=".epub,.pdf,.txt" class="hidden">
                 </label>
 
+                <button id="zen-mode-btn" class="bg-slate-800 hover:bg-slate-700 text-indigo-300 border border-slate-700 hover:border-indigo-500/50 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium transition flex items-center gap-1.5 shadow-sm" title="Toggle Zen Reading Mode (Hotkey: Z)">
+                    <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path></svg>
+                    <span id="zen-btn-label">Zen Mode</span>
+                </button>
+
                 <button id="open-mp3-modal-btn" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium transition shadow-lg shadow-emerald-600/20 flex items-center gap-2">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>
                     <span>Convert to MP3</span>
@@ -110,153 +178,263 @@
     <!-- Main Content Container -->
     <main class="max-w-7xl w-full mx-auto flex-1 p-4 sm:p-6 space-y-6">
 
-        <!-- Master Audio & Tracking Deck -->
-        <section class="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-6 shadow-xl space-y-5">
-            <!-- Top Row: Voice, Speed, Pitch, Quick Jump -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <!-- Voice Selection -->
-                <div>
-                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Narrator Voice</label>
-                    <select id="voice-select" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500"></select>
+        <!-- Master Audio & Tracking Deck (Collapsible) -->
+        <section id="audio-deck" class="bg-slate-900 border border-slate-800 rounded-2xl shadow-xl transition-all duration-300 overflow-hidden">
+            <!-- Deck Header Bar (Collapsible Toggle) -->
+            <div class="flex items-center justify-between px-4 sm:px-6 py-3 border-b border-slate-800/80 bg-slate-900/50">
+                <div class="flex items-center space-x-2">
+                    <span class="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></span>
+                    <h2 class="text-xs font-semibold uppercase tracking-wider text-slate-400">Audio Transport &amp; Narration Controls</h2>
                 </div>
+                <button id="collapse-audio-btn" class="text-slate-400 hover:text-white text-xs flex items-center gap-1.5 py-1 px-2.5 rounded-lg bg-slate-800/80 hover:bg-slate-700 border border-slate-700/60 transition" title="Collapse / Expand Audio Controls">
+                    <span id="collapse-audio-label">Collapse Controls</span>
+                    <svg id="collapse-audio-icon" class="w-3.5 h-3.5 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
+                </button>
+            </div>
 
-                <!-- Speed Control -->
-                <div>
-                    <div class="flex justify-between text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">
-                        <span>Reading Speed</span>
-                        <span id="rate-value" class="text-indigo-400">1.0x</span>
+            <!-- Full Deck Body -->
+            <div id="audio-deck-body" class="p-4 sm:p-6 space-y-5">
+                <!-- Top Row: Voice, Speed, Pitch, Quick Jump -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <!-- Voice Selection -->
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Narrator Voice</label>
+                        <select id="voice-select" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500"></select>
                     </div>
-                    <input type="range" id="rate-slider" min="0.5" max="2.5" value="1.0" step="0.1" class="w-full accent-indigo-500 mt-1.5 cursor-pointer">
-                </div>
 
-                <!-- Pitch Control -->
-                <div>
-                    <div class="flex justify-between text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">
-                        <span>Voice Pitch</span>
-                        <span id="pitch-value" class="text-indigo-400">1.0</span>
+                    <!-- Speed Control -->
+                    <div>
+                        <div class="flex justify-between text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">
+                            <span>Reading Speed</span>
+                            <span id="rate-value" class="text-indigo-400">1.0x</span>
+                        </div>
+                        <input type="range" id="rate-slider" min="0.5" max="2.5" value="1.0" step="0.1" class="w-full accent-indigo-500 mt-1.5 cursor-pointer">
                     </div>
-                    <input type="range" id="pitch-slider" min="0.5" max="1.5" value="1.0" step="0.1" class="w-full accent-indigo-500 mt-1.5 cursor-pointer">
+
+                    <!-- Pitch Control -->
+                    <div>
+                        <div class="flex justify-between text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">
+                            <span>Voice Pitch</span>
+                            <span id="pitch-value" class="text-indigo-400">1.0</span>
+                        </div>
+                        <input type="range" id="pitch-slider" min="0.5" max="1.5" value="1.0" step="0.1" class="w-full accent-indigo-500 mt-1.5 cursor-pointer">
+                    </div>
+
+                    <!-- Direct Paragraph Jump -->
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Jump to Paragraph</label>
+                        <div class="flex space-x-2">
+                            <input type="number" id="jump-input" min="1" value="1" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-1.5 text-sm text-white focus:outline-none focus:border-indigo-500" placeholder="Para #" max="10">
+                            <button id="jump-btn" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-indigo-300 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition shrink-0">
+                                Go
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Direct Paragraph Jump -->
-                <div>
-                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Jump to Paragraph</label>
-                    <div class="flex space-x-2">
-                        <input type="number" id="jump-input" min="1" value="1" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-1.5 text-sm text-white focus:outline-none focus:border-indigo-500" placeholder="Para #" max="10">
-                        <button id="jump-btn" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-indigo-300 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition shrink-0">
-                            Go
+                <!-- Interactive Progress Scrubber -->
+                <div class="space-y-1.5 pt-2">
+                    <div class="flex justify-between items-center text-xs text-slate-400">
+                        <span id="current-pos-display" class="font-medium text-indigo-300">Paragraph 0 of 0 (0%)</span>
+                        <span id="est-time-display">Estimated remaining: 0 mins</span>
+                    </div>
+                    <input type="range" id="progress-scrubber" min="0" max="1" value="0" step="1" class="w-full accent-indigo-500 h-2 bg-slate-800 rounded-lg cursor-pointer">
+                </div>
+
+                <!-- Transport Controls -->
+                <div class="flex flex-wrap items-center justify-between gap-4 pt-3 border-t border-slate-800">
+                    <!-- Left status -->
+                    <div class="flex items-center space-x-2.5 min-w-[200px]">
+                        <span id="status-dot" class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+                        <span id="status-bar" class="text-xs sm:text-sm text-slate-300 truncate max-w-xs sm:max-w-md">Ready to play.</span>
+                    </div>
+
+                    <!-- Center Playback Buttons -->
+                    <div class="flex items-center space-x-2 sm:space-x-3 mx-auto sm:mx-0">
+                        <button id="prev-btn" class="p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition" title="Previous Paragraph">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                        </button>
+
+                        <button id="play-btn" class="bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-2.5 rounded-xl font-semibold flex items-center space-x-2 shadow-lg shadow-indigo-600/30 transition">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg>
+                            <span id="play-text">Play</span>
+                        </button>
+
+                        <button id="pause-btn" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white px-4 py-2.5 rounded-xl text-sm font-medium transition">
+                            Pause / Resume
+                        </button>
+
+                        <button id="stop-btn" class="bg-rose-600/20 hover:bg-rose-600 border border-rose-500/30 text-rose-300 hover:text-white px-4 py-2.5 rounded-xl text-sm font-medium transition">
+                            Stop
+                        </button>
+
+                        <button id="next-btn" class="p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition" title="Next Paragraph">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        </button>
+                    </div>
+
+                    <!-- Right Bookmark Button -->
+                    <div class="flex items-center space-x-2">
+                        <button id="bookmark-btn" class="bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-300 px-3.5 py-2 rounded-xl text-xs font-medium transition flex items-center space-x-1.5" title="Save current position to history">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
+                            <span>Bookmark Position</span>
                         </button>
                     </div>
                 </div>
             </div>
 
-            <!-- Interactive Progress Scrubber -->
-            <div class="space-y-1.5 pt-2">
-                <div class="flex justify-between items-center text-xs text-slate-400">
-                    <span id="current-pos-display" class="font-medium text-indigo-300">Paragraph 1 of 1 (0%)</span>
-                    <span id="est-time-display">Estimated remaining: ~1 min</span>
-                </div>
-                <input type="range" id="progress-scrubber" min="0" max="1" value="0" step="1" class="w-full accent-indigo-500 h-2 bg-slate-800 rounded-lg cursor-pointer">
-            </div>
-
-            <!-- Transport Controls -->
-            <div class="flex flex-wrap items-center justify-between gap-4 pt-3 border-t border-slate-800">
-                <!-- Left status -->
-                <div class="flex items-center space-x-2.5 min-w-[200px]">
-                    <span id="status-dot" class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
-                    <span id="status-bar" class="text-xs sm:text-sm text-slate-300 truncate max-w-xs sm:max-w-md">Ready to play.</span>
-                </div>
-
-                <!-- Center Playback Buttons -->
-                <div class="flex items-center space-x-2 sm:space-x-3 mx-auto sm:mx-0">
-                    <button id="prev-btn" class="p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition" title="Previous Paragraph">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
-                    </button>
-
-                    <button id="play-btn" class="bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-2.5 rounded-xl font-semibold flex items-center space-x-2 shadow-lg shadow-indigo-600/30 transition">
-                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg>
-                        <span id="play-text">Play</span>
-                    </button>
-
-                    <button id="pause-btn" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white px-4 py-2.5 rounded-xl text-sm font-medium transition">
-                        Pause / Resume
-                    </button>
-
-                    <button id="stop-btn" class="bg-rose-600/20 hover:bg-rose-600 border border-rose-500/30 text-rose-300 hover:text-white px-4 py-2.5 rounded-xl text-sm font-medium transition">
-                        Stop
-                    </button>
-
-                    <button id="next-btn" class="p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition" title="Next Paragraph">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                    </button>
-                </div>
-
-                <!-- Right Bookmark Button -->
+            <!-- Collapsed Mini Transport Bar (Visible when audio deck body is collapsed) -->
+            <div id="audio-deck-mini" class="hidden px-4 sm:px-6 py-2.5 items-center justify-between gap-3 text-xs bg-slate-900/60">
                 <div class="flex items-center space-x-2">
-                    <button id="bookmark-btn" class="bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-300 px-3.5 py-2 rounded-xl text-xs font-medium transition flex items-center space-x-1.5" title="Save current position to history">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
-                        <span>Bookmark Position</span>
+                    <button id="mini-prev-btn" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300" title="Previous Paragraph">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                    </button>
+                    <button id="mini-play-btn" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1 rounded-lg font-semibold flex items-center space-x-1 transition shadow-sm">
+                        <span id="mini-play-text">Play</span>
+                    </button>
+                    <button id="mini-pause-btn" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white px-2 py-1 rounded-lg text-xs transition">
+                        Pause
+                    </button>
+                    <button id="mini-next-btn" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300" title="Next Paragraph">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                     </button>
                 </div>
+                <div class="flex items-center space-x-3 text-slate-400">
+                    <span id="mini-pos-display" class="font-medium text-indigo-300">Paragraph 0 of 0</span>
+                    <span id="mini-time-display" class="hidden sm:inline">Estimated remaining: 0 mins</span>
+                </div>
+                <button id="expand-deck-btn" class="text-xs text-indigo-400 hover:text-indigo-300 flex items-center gap-1 font-medium py-1 px-2 rounded-lg hover:bg-slate-800 transition">
+                    <span>Expand Deck</span>
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
             </div>
         </section>
 
         <!-- Main Workspace Grid: Reader + History & Source Sidebar -->
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div id="workspace-grid" class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
 
-            <!-- Left/Center Column: Interactive Reader (8 cols on large screens) -->
-            <div class="lg:col-span-8 flex flex-col space-y-3">
+            <!-- Left/Center Column: Interactive Reader -->
+            <div id="reader-column" class="lg:col-span-8 flex flex-col space-y-3 transition-all duration-300">
                 <div class="flex flex-wrap items-center justify-between gap-2">
                     <div class="flex items-center space-x-2">
                         <h2 class="text-sm font-semibold uppercase tracking-wider text-slate-400">Interactive Book Reader</h2>
-                        <span class="text-xs text-slate-500">(Click any paragraph to start playing from there)</span>
+                        <span class="text-xs text-slate-500 hidden sm:inline">(Click any paragraph to play from there)</span>
                     </div>
 
-                    <!-- Search within book -->
-                    <div class="relative w-full sm:w-64">
-                        <input type="text" id="reader-search" placeholder="Filter or find text..." class="w-full bg-slate-900 border border-slate-800 rounded-xl pl-8 pr-3 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-indigo-500">
-                        <svg class="w-3.5 h-3.5 text-slate-500 absolute left-2.5 top-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    <div class="flex items-center gap-2 w-full sm:w-auto">
+                        <!-- Search within book -->
+                        <div class="relative flex-1 sm:w-64">
+                            <input type="text" id="reader-search" placeholder="Filter or find text..." class="w-full bg-slate-900 border border-slate-800 rounded-xl pl-8 pr-3 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-indigo-500">
+                            <svg class="w-3.5 h-3.5 text-slate-500 absolute left-2.5 top-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        </div>
+
+                        <!-- Button to restore sidebar when sidebar is collapsed -->
+                        <button id="expand-sidebar-btn" class="hidden text-xs text-indigo-400 hover:text-white bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-slate-700 px-3 py-1.5 rounded-xl transition items-center gap-1.5 shrink-0 shadow-sm" title="Show Sidebar Panels">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                            <span>Show Panels</span>
+                        </button>
                     </div>
                 </div>
 
                 <!-- Reader Display Box -->
-                <div id="reader-display" class="reader-font bg-slate-900 border border-slate-800 text-slate-100 rounded-2xl p-5 sm:p-8 h-[540px] overflow-y-auto space-y-4 text-base sm:text-lg leading-relaxed shadow-inner"></div>
+                <div id="reader-display" class="reader-font bg-slate-900 border border-slate-800 text-slate-100 rounded-2xl p-5 sm:p-8 h-[540px] overflow-y-auto space-y-4 text-base sm:text-lg leading-relaxed shadow-inner transition-all duration-300"></div>
             </div>
 
-            <!-- Right Column: Playback History, Bookmarks & Raw Text Editor (4 cols on large screens) -->
-            <div class="lg:col-span-4 flex flex-col space-y-6">
+            <!-- Right Column: Sidebar (Local Library, History, Text Editor) -->
+            <div id="sidebar-column" class="lg:col-span-4 flex flex-col space-y-4 transition-all duration-300">
+                <div class="flex items-center justify-between px-1 text-xs">
+                    <span class="font-semibold uppercase tracking-wider text-[11px] text-slate-500">Panels &amp; Tools</span>
+                    <button id="collapse-sidebar-btn" class="text-slate-400 hover:text-white text-xs flex items-center gap-1 py-1 px-2 rounded-lg hover:bg-slate-800 transition" title="Hide sidebar to give book reader full width">
+                        <span>Hide Panels</span>
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    </button>
+                </div>
 
-                <!-- Playback History & Saved Positions Panel -->
-                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 flex flex-col h-[310px]">
-                    <div class="flex items-center justify-between mb-3">
-                        <div>
-                            <h3 class="text-sm font-semibold text-white flex items-center gap-1.5">
-                                <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                <span>Play History &amp; Bookmarks</span>
+                <!-- Panel 1: Local Library -->
+                <div id="panel-library" class="panel-card bg-slate-900 border border-slate-800 rounded-2xl shadow-lg transition flex flex-col">
+                    <div class="p-3.5 sm:p-4 flex items-center justify-between border-b border-slate-800/80 cursor-pointer select-none panel-header">
+                        <div class="flex items-center space-x-2">
+                            <div class="w-7 h-7 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                            </div>
+                            <h3 class="text-xs sm:text-sm font-semibold text-white flex items-center gap-1.5">
+                                <span>Local Library</span>
+                                <span id="library-count-badge" class="text-[10px] bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 px-1.5 py-0.2 rounded-full font-normal">0</span>
                             </h3>
-                            <p class="text-[11px] text-slate-400">Auto-logs where you started, paused, or stopped</p>
                         </div>
-                        <button id="clear-history-btn" class="text-xs text-slate-400 hover:text-rose-400 transition">Clear</button>
+                        <div class="flex items-center space-x-2">
+                            <label class="bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-300 border border-indigo-500/30 text-[11px] font-medium px-2 py-0.5 rounded-lg cursor-pointer transition flex items-center gap-1" title="Upload new book into library">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                                <span>Upload</span>
+                                <input type="file" id="library-file-upload" accept=".epub,.pdf,.txt" class="hidden">
+                            </label>
+                            <button class="panel-toggle-btn text-slate-400 hover:text-white p-1 rounded transition" title="Toggle panel">
+                                <svg class="w-4 h-4 panel-chevron transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </button>
+                        </div>
                     </div>
 
-                    <!-- History List -->
-                    <div id="history-list" class="flex-1 overflow-y-auto space-y-2 pr-1">
-                        <div class="text-center py-8 text-xs text-slate-500">
-                            No playback positions recorded yet. Click Play, Stop, or Bookmark to log positions.
+                    <div class="panel-body p-3.5 sm:p-4 flex flex-col space-y-2.5">
+                        <div id="library-search-box" class="hidden">
+                            <input type="text" id="library-search" placeholder="Search your books..." class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1 text-xs text-slate-200 focus:outline-none focus:border-indigo-500">
+                        </div>
+                        <div id="library-list" class="max-h-[220px] overflow-y-auto space-y-2 pr-1"></div>
+                    </div>
+                </div>
+
+                <!-- Panel 2: Play History & Bookmarks -->
+                <div id="panel-history" class="panel-card bg-slate-900 border border-slate-800 rounded-2xl shadow-lg transition flex flex-col">
+                    <div class="p-3.5 sm:p-4 flex items-center justify-between border-b border-slate-800/80 cursor-pointer select-none panel-header">
+                        <div class="flex items-center space-x-2">
+                            <div class="w-7 h-7 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            </div>
+                            <h3 class="text-xs sm:text-sm font-semibold text-white">Play History &amp; Bookmarks</h3>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <button id="clear-history-btn" class="text-xs text-slate-400 hover:text-rose-400 transition">Clear</button>
+                            <button class="panel-toggle-btn text-slate-400 hover:text-white p-1 rounded transition" title="Toggle panel">
+                                <svg class="w-4 h-4 panel-chevron transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="panel-body p-3.5 sm:p-4 flex flex-col">
+                        <div id="history-list" class="max-h-[220px] overflow-y-auto space-y-2 pr-1">
+                            <div class="text-center py-6 text-xs text-slate-500">
+                                No playback positions recorded yet. Click Play, Stop, or Bookmark to log positions.
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Source Text / Paste Editor -->
-                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 flex flex-col h-[245px]">
-                    <div class="flex items-center justify-between mb-2">
-                        <label for="text-input" class="text-xs font-semibold uppercase tracking-wider text-slate-400">Raw Book Text / Editor</label>
-                        <span id="word-count-badge" class="text-[11px] text-slate-400">0 words</span>
+                <!-- Panel 3: Raw Book Text / Editor -->
+                <div id="panel-editor" class="panel-card bg-slate-900 border border-slate-800 rounded-2xl shadow-lg transition flex flex-col">
+                    <div class="p-3.5 sm:p-4 flex items-center justify-between border-b border-slate-800/80 cursor-pointer select-none panel-header">
+                        <div class="flex items-center space-x-2">
+                            <div class="w-7 h-7 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                            </div>
+                            <h3 class="text-xs sm:text-sm font-semibold text-white">Raw Book Text / Editor</h3>
+                            <span id="word-count-badge" class="text-[10px] text-slate-400 font-normal">0 words</span>
+                        </div>
+                        <button class="panel-toggle-btn text-slate-400 hover:text-white p-1 rounded transition" title="Toggle panel">
+                            <svg class="w-4 h-4 panel-chevron transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
                     </div>
-                    <textarea id="text-input" class="flex-1 bg-slate-950 border border-slate-800 rounded-xl p-3 text-slate-300 text-xs focus:outline-none focus:border-indigo-500 resize-none leading-relaxed" placeholder="Paste chapters or upload an EPUB/PDF above..."></textarea>
-                    <button id="load-text-btn" class="mt-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-indigo-300 py-2 rounded-xl text-xs font-semibold transition">
-                        Update Reader from Text Box →
-                    </button>
+
+                    <div class="panel-body p-3.5 sm:p-4 flex flex-col space-y-2">
+                        <textarea id="text-input" class="w-full h-32 bg-slate-950 border border-slate-800 rounded-xl p-3 text-slate-300 text-xs focus:outline-none focus:border-indigo-500 resize-none leading-relaxed" placeholder="Paste chapters or upload an EPUB/PDF above..."></textarea>
+                        <div class="flex items-center gap-2 pt-1">
+                            <button id="load-text-btn" class="flex-1 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-indigo-300 py-2 rounded-xl text-xs font-semibold transition truncate">
+                                Update Reader →
+                            </button>
+                            <button id="save-text-to-lib-btn" class="bg-indigo-600/20 hover:bg-indigo-600/30 border border-indigo-500/30 text-indigo-300 px-3 py-2 rounded-xl text-xs font-semibold transition flex items-center gap-1.5 shrink-0" title="Save this text into your Local Library">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg>
+                                <span>Save to Library</span>
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
             </div>
@@ -352,6 +530,37 @@
         </div>
     </div>
 
+    <!-- Zen Mode Floating Transport Pill (Centered at bottom during Zen Mode) -->
+    <div id="zen-floating-player" class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-40 bg-slate-900/95 backdrop-blur-md border border-slate-700/80 shadow-2xl rounded-2xl px-4 py-2.5 items-center gap-3 text-xs">
+        <button id="zen-prev-btn" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition" title="Previous Paragraph">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+        </button>
+
+        <button id="zen-play-btn" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3.5 py-1.5 rounded-xl font-semibold flex items-center space-x-1.5 shadow-md shadow-indigo-600/30 transition">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg>
+            <span id="zen-play-text">Play</span>
+        </button>
+
+        <button id="zen-pause-btn" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white px-2.5 py-1.5 rounded-lg text-xs font-medium transition">
+            Pause
+        </button>
+
+        <button id="zen-next-btn" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition" title="Next Paragraph">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+        </button>
+
+        <div class="h-4 w-px bg-slate-700 mx-1"></div>
+
+        <span id="zen-pos-text" class="text-indigo-300 font-medium whitespace-nowrap">Para 0 / 0</span>
+
+        <div class="h-4 w-px bg-slate-700 mx-1"></div>
+
+        <button id="zen-exit-btn" class="text-slate-400 hover:text-white px-2 py-1 rounded-lg hover:bg-slate-800 transition flex items-center gap-1 shrink-0" title="Exit Zen Mode (Esc or Z)">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            <span>Exit Zen</span>
+        </button>
+    </div>
+
     <script>
         // Configure PDF.js worker for client-side PDF parsing on GitHub Pages
         if (window.pdfjsLib) {
@@ -393,6 +602,22 @@
         const resumeSnippet = document.getElementById('resume-snippet');
         const resumeNowBtn = document.getElementById('resume-now-btn');
         const dismissResumeBtn = document.getElementById('dismiss-resume-btn');
+        const saveTextToLibBtn = document.getElementById('save-text-to-lib-btn');
+        const libraryFileUpload = document.getElementById('library-file-upload');
+        const librarySearch = document.getElementById('library-search');
+        const libraryList = document.getElementById('library-list');
+        const libraryCountBadge = document.getElementById('library-count-badge');
+        const audioDeck = document.getElementById('audio-deck');
+        const collapseAudioBtn = document.getElementById('collapse-audio-btn');
+        const collapseAudioLabel = document.getElementById('collapse-audio-label');
+        const expandDeckBtn = document.getElementById('expand-deck-btn');
+        const sidebarColumn = document.getElementById('sidebar-column');
+        const collapseSidebarBtn = document.getElementById('collapse-sidebar-btn');
+        const expandSidebarBtn = document.getElementById('expand-sidebar-btn');
+        const zenModeBtn = document.getElementById('zen-mode-btn');
+        const zenBtnLabel = document.getElementById('zen-btn-label');
+        const zenFloatingPlayer = document.getElementById('zen-floating-player');
+        const zenExitBtn = document.getElementById('zen-exit-btn');
 
         // Application State
         let voices = [];
@@ -405,6 +630,130 @@
 
         const STORAGE_KEY_HISTORY = 'studio_audiobook_history_v2';
         const STORAGE_KEY_LAST_POS = 'studio_audiobook_last_pos_v2';
+        const STORAGE_KEY_ACTIVE_BOOK = 'epubfm_active_book_id_v2';
+        const STORAGE_KEY_UI_STATE = 'epubfm_ui_state_v2';
+
+        // ========================================================
+        // Local Library Storage Service (IndexedDB + fallback)
+        // ========================================================
+        const LIB_DB_NAME = 'epubfm_local_library';
+        const LIB_DB_VERSION = 1;
+        const LIB_STORE_NAME = 'books';
+
+        class LibraryStore {
+            constructor() {
+                this.db = null;
+                this.ready = this.init();
+            }
+
+            async init() {
+                if (!window.indexedDB) {
+                    console.warn('IndexedDB not supported, falling back to localStorage');
+                    return null;
+                }
+                return new Promise((resolve) => {
+                    const req = indexedDB.open(LIB_DB_NAME, LIB_DB_VERSION);
+                    req.onupgradeneeded = (e) => {
+                        const db = e.target.result;
+                        if (!db.objectStoreNames.contains(LIB_STORE_NAME)) {
+                            const store = db.createObjectStore(LIB_STORE_NAME, { keyPath: 'id' });
+                            store.createIndex('updatedAt', 'updatedAt', { unique: false });
+                        }
+                    };
+                    req.onsuccess = (e) => {
+                        this.db = e.target.result;
+                        resolve(this.db);
+                    };
+                    req.onerror = (e) => {
+                        console.error('IndexedDB open error:', e);
+                        resolve(null);
+                    };
+                });
+            }
+
+            async getAll() {
+                await this.ready;
+                if (this.db) {
+                    return new Promise((resolve) => {
+                        const tx = this.db.transaction(LIB_STORE_NAME, 'readonly');
+                        const store = tx.objectStore(LIB_STORE_NAME);
+                        const req = store.getAll();
+                        req.onsuccess = () => {
+                            const list = req.result || [];
+                            list.sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
+                            resolve(list);
+                        };
+                        req.onerror = () => resolve([]);
+                    });
+                }
+                try {
+                    const raw = localStorage.getItem('epubfm_library_fallback');
+                    return raw ? JSON.parse(raw) : [];
+                } catch (e) {
+                    return [];
+                }
+            }
+
+            async get(id) {
+                await this.ready;
+                if (this.db) {
+                    return new Promise((resolve) => {
+                        const tx = this.db.transaction(LIB_STORE_NAME, 'readonly');
+                        const store = tx.objectStore(LIB_STORE_NAME);
+                        const req = store.get(id);
+                        req.onsuccess = () => resolve(req.result || null);
+                        req.onerror = () => resolve(null);
+                    });
+                }
+                const all = await this.getAll();
+                return all.find(b => b.id === id) || null;
+            }
+
+            async save(book) {
+                await this.ready;
+                book.updatedAt = Date.now();
+                if (this.db) {
+                    return new Promise((resolve, reject) => {
+                        const tx = this.db.transaction(LIB_STORE_NAME, 'readwrite');
+                        const store = tx.objectStore(LIB_STORE_NAME);
+                        store.put(book);
+                        tx.oncomplete = () => resolve(book);
+                        tx.onerror = (e) => reject(e);
+                    });
+                }
+                let all = await this.getAll();
+                const idx = all.findIndex(b => b.id === book.id);
+                if (idx >= 0) all[idx] = book;
+                else all.unshift(book);
+                try {
+                    localStorage.setItem('epubfm_library_fallback', JSON.stringify(all));
+                } catch (e) {
+                    console.error('LocalStorage quota error:', e);
+                }
+                return book;
+            }
+
+            async delete(id) {
+                await this.ready;
+                if (this.db) {
+                    return new Promise((resolve) => {
+                        const tx = this.db.transaction(LIB_STORE_NAME, 'readwrite');
+                        const store = tx.objectStore(LIB_STORE_NAME);
+                        store.delete(id);
+                        tx.oncomplete = () => resolve(true);
+                        tx.onerror = () => resolve(false);
+                    });
+                }
+                let all = await this.getAll();
+                all = all.filter(b => b.id !== id);
+                try {
+                    localStorage.setItem('epubfm_library_fallback', JSON.stringify(all));
+                } catch (e) {}
+                return true;
+            }
+        }
+
+        const libraryStore = new LibraryStore();
 
         let userSelectedVoiceName = null;
         voiceSelect.addEventListener('change', () => {
@@ -633,12 +982,16 @@
         });
 
         // 4. Load Text into Interactive Reader
-        function loadTextIntoReader(rawText, title = currentBookTitle) {
+        function loadTextIntoReader(rawText, title = currentBookTitle, bookId = null) {
             synth.cancel();
             isPlaying = false;
             updatePlayButtonUI(false);
             currentBookTitle = title || 'No book loaded';
-            currentBookId = currentBookTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+            if (bookId) {
+                currentBookId = bookId;
+            } else if (!currentBookId) {
+                currentBookId = currentBookTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+            }
             bookTitleDisplay.textContent = currentBookTitle;
 
             readerDisplay.innerHTML = '';
@@ -824,11 +1177,18 @@
         }
 
         function updateProgressUI() {
+            const miniPos = document.getElementById('mini-pos-display');
+            const miniTime = document.getElementById('mini-time-display');
+            const zenPos = document.getElementById('zen-pos-text');
+
             if (!paragraphs.length) {
                 currentPosDisplay.textContent = 'Paragraph 0 of 0 (0%)';
                 progressScrubber.value = 0;
                 jumpInput.value = 0;
                 estTimeDisplay.textContent = 'Estimated remaining: 0 mins';
+                if (miniPos) miniPos.textContent = 'Paragraph 0 of 0';
+                if (miniTime) miniTime.textContent = 'Estimated remaining: 0 mins';
+                if (zenPos) zenPos.textContent = 'Para 0 / 0';
                 return;
             }
 
@@ -843,11 +1203,20 @@
             const remainingWords = paragraphs.slice(currentIndex).join(' ').split(/\s+/).length;
             const wordsPerMin = 155 * parseFloat(rateSlider.value || 1);
             const mins = Math.max(1, Math.round(remainingWords / wordsPerMin));
-            estTimeDisplay.textContent = `Estimated remaining: ~${mins} min${mins === 1 ? '' : 's'}`;
+            const estStr = `Estimated remaining: ~${mins} min${mins === 1 ? '' : 's'}`;
+            estTimeDisplay.textContent = estStr;
+
+            if (miniPos) miniPos.textContent = `Paragraph ${current} of ${total} (${pct}%)`;
+            if (miniTime) miniTime.textContent = estStr;
+            if (zenPos) zenPos.textContent = `Para ${current} / ${total}`;
         }
 
         function updatePlayButtonUI(playing) {
             playText.textContent = playing ? 'Restart Para' : 'Play';
+            const miniPlay = document.getElementById('mini-play-text');
+            if (miniPlay) miniPlay.textContent = playing ? 'Restart' : 'Play';
+            const zenPlay = document.getElementById('zen-play-text');
+            if (zenPlay) zenPlay.textContent = playing ? 'Restart' : 'Play';
         }
 
         function setStatus(message, state = 'ready') {
@@ -959,11 +1328,23 @@
         });
 
         // 7. Unified File Parser: Supports .EPUB, .PDF, and .TXT
-        fileUpload.addEventListener('change', async (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-            await processUploadedFile(file);
-        });
+        if (fileUpload) {
+            fileUpload.addEventListener('change', async (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                await processUploadedFile(file);
+                fileUpload.value = '';
+            });
+        }
+
+        if (libraryFileUpload) {
+            libraryFileUpload.addEventListener('change', async (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                await processUploadedFile(file);
+                libraryFileUpload.value = '';
+            });
+        }
 
         async function processUploadedFile(file) {
             const fileName = file.name;
@@ -987,14 +1368,342 @@
                     throw new Error('No readable text could be extracted from this file.');
                 }
 
-                textInput.value = extractedText.trim();
-                loadTextIntoReader(textInput.value, fileName.replace(/\.(epub|pdf|txt)$/i, ''));
-                setStatus(`Successfully loaded "${fileName}"! Click Play to listen.`, 'ready');
+                const cleanTitle = fileName.replace(/\.(epub|pdf|txt)$/i, '');
+                const rawTrimmed = extractedText.trim();
+                const paras = rawTrimmed.split(/\n+/).map(p => p.trim()).filter(p => p.length > 0);
+                const wordCount = rawTrimmed.split(/\s+/).length;
+
+                // Save to Local Library
+                const book = {
+                    id: 'book_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
+                    title: cleanTitle,
+                    filename: fileName,
+                    fileType: ext,
+                    text: rawTrimmed,
+                    wordCount: wordCount,
+                    paragraphsCount: paras.length,
+                    addedAt: new Date().toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }),
+                    updatedAt: Date.now()
+                };
+
+                await libraryStore.save(book);
+                currentBookId = book.id;
+                try { localStorage.setItem(STORAGE_KEY_ACTIVE_BOOK, book.id); } catch (e) {}
+
+                textInput.value = rawTrimmed;
+                loadTextIntoReader(rawTrimmed, cleanTitle, book.id);
+                await renderLibraryList();
+                setStatus(`Saved "${cleanTitle}" to local library & loaded into reader!`, 'ready');
             } catch (err) {
                 console.error(err);
                 setStatus(`Error loading file: ${err.message}`, 'error');
             }
         }
+
+        // ==========================================
+        // Local Library Controller Functions
+        // ==========================================
+        async function renderLibraryList() {
+            if (!libraryList) return;
+
+            const books = await libraryStore.getAll();
+            if (libraryCountBadge) libraryCountBadge.textContent = books.length;
+
+            const searchBox = document.getElementById('library-search-box');
+            if (searchBox) {
+                if (books.length > 2) searchBox.classList.remove('hidden');
+                else searchBox.classList.add('hidden');
+            }
+
+            const query = (librarySearch?.value || '').trim().toLowerCase();
+            const filtered = query
+                ? books.filter(b => (b.title || '').toLowerCase().includes(query) || (b.fileType || '').toLowerCase().includes(query))
+                : books;
+
+            if (!books.length) {
+                libraryList.innerHTML = `
+                    <div class="text-center py-6 px-3 border border-dashed border-slate-800 rounded-xl">
+                        <svg class="w-8 h-8 mx-auto mb-2 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                        <p class="text-xs text-slate-400 font-medium">Your Local Library is empty</p>
+                        <p class="text-[11px] text-slate-500 mt-0.5">Upload an EPUB, PDF, or TXT file to save it locally.</p>
+                    </div>`;
+                return;
+            }
+
+            if (!filtered.length) {
+                libraryList.innerHTML = `<div class="text-center py-4 text-xs text-slate-500">No books matching "${escapeHtml(query)}"</div>`;
+                return;
+            }
+
+            const typeColors = {
+                epub: 'bg-indigo-500/20 text-indigo-300 border-indigo-500/30',
+                pdf: 'bg-rose-500/20 text-rose-300 border-rose-500/30',
+                txt: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
+            };
+
+            libraryList.innerHTML = '';
+            filtered.forEach(book => {
+                const isActive = book.id === currentBookId;
+                const card = document.createElement('div');
+                card.className = `library-item group p-2.5 rounded-xl border transition cursor-pointer flex items-start justify-between gap-2.5 ${
+                    isActive
+                        ? 'bg-indigo-950/50 border-indigo-500/60 shadow-md shadow-indigo-950/50'
+                        : 'bg-slate-950/60 hover:bg-slate-800/80 border-slate-800'
+                }`;
+
+                const typeColorClass = typeColors[book.fileType] || typeColors.txt;
+
+                card.innerHTML = `
+                    <div class="flex items-start gap-2.5 min-w-0 flex-1">
+                        <span class="text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded border shrink-0 ${typeColorClass}">${book.fileType || 'TXT'}</span>
+                        <div class="min-w-0 flex-1">
+                            <div class="flex items-center gap-1.5">
+                                <h4 class="text-xs font-semibold truncate group-hover:text-white ${isActive ? 'text-indigo-300 font-bold' : 'text-slate-200'}">${escapeHtml(book.title)}</h4>
+                                ${isActive ? '<span class="text-[9px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-1 rounded uppercase tracking-wider font-semibold shrink-0">Reading</span>' : ''}
+                            </div>
+                            <div class="flex items-center gap-2 text-[10px] text-slate-500 mt-0.5">
+                                <span>${(book.paragraphsCount || 0)} paras</span>
+                                <span>•</span>
+                                <span>${(book.wordCount || 0).toLocaleString()} words</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-1 shrink-0">
+                        <button class="delete-book-btn p-1 text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 rounded transition" title="Remove from library">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                        </button>
+                    </div>
+                `;
+
+                card.addEventListener('click', (e) => {
+                    if (e.target.closest('.delete-book-btn')) return;
+                    selectBookFromLibrary(book.id);
+                });
+
+                const delBtn = card.querySelector('.delete-book-btn');
+                delBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    deleteBookFromLibrary(book.id);
+                });
+
+                libraryList.appendChild(card);
+            });
+        }
+
+        async function selectBookFromLibrary(bookId) {
+            const book = await libraryStore.get(bookId);
+            if (!book) return;
+
+            currentBookId = book.id;
+            try { localStorage.setItem(STORAGE_KEY_ACTIVE_BOOK, book.id); } catch (e) {}
+
+            textInput.value = book.text;
+            loadTextIntoReader(book.text, book.title, book.id);
+            await renderLibraryList();
+            setStatus(`Selected "${book.title}" from library.`, 'ready');
+        }
+
+        async function deleteBookFromLibrary(bookId) {
+            const book = await libraryStore.get(bookId);
+            const title = book ? book.title : 'book';
+            if (!confirm(`Are you sure you want to remove "${title}" from your local library?`)) {
+                return;
+            }
+            await libraryStore.delete(bookId);
+            if (currentBookId === bookId) {
+                currentBookId = '';
+                try { localStorage.removeItem(STORAGE_KEY_ACTIVE_BOOK); } catch (e) {}
+                textInput.value = '';
+                loadTextIntoReader('', 'No book loaded');
+            }
+            await renderLibraryList();
+            setStatus(`Removed "${title}" from local library.`, 'ready');
+        }
+
+        async function saveCurrentTextToLibrary() {
+            const raw = textInput.value.trim();
+            if (!raw) {
+                setStatus('Please enter or paste text into the editor first.', 'error');
+                return;
+            }
+            const lines = raw.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+            const suggestedTitle = lines[0] ? lines[0].slice(0, 40) : `Document ${new Date().toLocaleDateString()}`;
+            const title = prompt('Enter a title for this book:', (currentBookTitle && currentBookTitle !== 'No book loaded') ? currentBookTitle : suggestedTitle);
+            if (!title) return;
+
+            const paras = raw.split(/\n+/).map(p => p.trim()).filter(p => p.length > 0);
+            const wordCount = raw.split(/\s+/).length;
+
+            const book = {
+                id: 'book_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
+                title: title.trim(),
+                filename: title.trim() + '.txt',
+                fileType: 'txt',
+                text: raw,
+                wordCount: wordCount,
+                paragraphsCount: paras.length,
+                addedAt: new Date().toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }),
+                updatedAt: Date.now()
+            };
+
+            await libraryStore.save(book);
+            currentBookId = book.id;
+            try { localStorage.setItem(STORAGE_KEY_ACTIVE_BOOK, book.id); } catch (e) {}
+            loadTextIntoReader(book.text, book.title, book.id);
+            await renderLibraryList();
+            setStatus(`Saved "${book.title}" to local library!`, 'ready');
+        }
+
+        if (librarySearch) {
+            librarySearch.addEventListener('input', () => renderLibraryList());
+        }
+
+        if (saveTextToLibBtn) {
+            saveTextToLibBtn.addEventListener('click', () => saveCurrentTextToLibrary());
+        }
+
+        // ==========================================
+        // Collapsible Areas & Zen Mode Management
+        // ==========================================
+        let isZenMode = false;
+        let uiState = {
+            audioCollapsed: false,
+            sidebarCollapsed: false,
+            panelLibrary: false,
+            panelHistory: false,
+            panelEditor: false
+        };
+
+        function loadUIState() {
+            try {
+                const raw = localStorage.getItem(STORAGE_KEY_UI_STATE);
+                if (raw) Object.assign(uiState, JSON.parse(raw));
+            } catch (e) {}
+            applyUIState();
+        }
+
+        function saveUIState() {
+            try {
+                localStorage.setItem(STORAGE_KEY_UI_STATE, JSON.stringify(uiState));
+            } catch (e) {}
+        }
+
+        function applyUIState() {
+            // Audio Deck
+            if (audioDeck) {
+                if (uiState.audioCollapsed) {
+                    audioDeck.classList.add('is-collapsed');
+                    if (collapseAudioLabel) collapseAudioLabel.textContent = 'Expand Controls';
+                } else {
+                    audioDeck.classList.remove('is-collapsed');
+                    if (collapseAudioLabel) collapseAudioLabel.textContent = 'Collapse Controls';
+                }
+            }
+
+            // Sidebar
+            if (uiState.sidebarCollapsed) {
+                document.body.classList.add('sidebar-collapsed');
+            } else {
+                document.body.classList.remove('sidebar-collapsed');
+            }
+
+            // Individual Panels
+            ['panel-library', 'panel-history', 'panel-editor'].forEach(id => {
+                const el = document.getElementById(id);
+                const key = id === 'panel-library' ? 'panelLibrary' : id === 'panel-history' ? 'panelHistory' : 'panelEditor';
+                if (el) {
+                    if (uiState[key]) el.classList.add('is-collapsed');
+                    else el.classList.remove('is-collapsed');
+                }
+            });
+        }
+
+        function toggleAudioDeck(force) {
+            const next = typeof force === 'boolean' ? force : !uiState.audioCollapsed;
+            uiState.audioCollapsed = next;
+            saveUIState();
+            applyUIState();
+        }
+
+        if (collapseAudioBtn) collapseAudioBtn.addEventListener('click', () => toggleAudioDeck());
+        if (expandDeckBtn) expandDeckBtn.addEventListener('click', () => toggleAudioDeck(false));
+
+        function toggleSidebar(force) {
+            const next = typeof force === 'boolean' ? force : !uiState.sidebarCollapsed;
+            uiState.sidebarCollapsed = next;
+            saveUIState();
+            applyUIState();
+        }
+
+        if (collapseSidebarBtn) collapseSidebarBtn.addEventListener('click', () => toggleSidebar(true));
+        if (expandSidebarBtn) expandSidebarBtn.addEventListener('click', () => toggleSidebar(false));
+
+        // Toggle Individual Panels
+        document.querySelectorAll('.panel-card').forEach(panel => {
+            const header = panel.querySelector('.panel-header');
+            if (header) {
+                header.addEventListener('click', (e) => {
+                    if (e.target.closest('label') || e.target.closest('input') || e.target.closest('button:not(.panel-toggle-btn)')) return;
+                    panel.classList.toggle('is-collapsed');
+                    const id = panel.id;
+                    const key = id === 'panel-library' ? 'panelLibrary' : id === 'panel-history' ? 'panelHistory' : 'panelEditor';
+                    uiState[key] = panel.classList.contains('is-collapsed');
+                    saveUIState();
+                });
+            }
+        });
+
+        // Master Zen Mode Toggle
+        function toggleZenMode(enable) {
+            isZenMode = typeof enable === 'boolean' ? enable : !isZenMode;
+            if (isZenMode) {
+                document.body.classList.add('zen-mode');
+                if (zenBtnLabel) zenBtnLabel.textContent = 'Exit Zen';
+                if (zenModeBtn) {
+                    zenModeBtn.classList.remove('text-indigo-300', 'bg-slate-800');
+                    zenModeBtn.classList.add('text-white', 'bg-indigo-600', 'border-indigo-500');
+                }
+            } else {
+                document.body.classList.remove('zen-mode');
+                if (zenBtnLabel) zenBtnLabel.textContent = 'Zen Mode';
+                if (zenModeBtn) {
+                    zenModeBtn.classList.add('text-indigo-300', 'bg-slate-800');
+                    zenModeBtn.classList.remove('text-white', 'bg-indigo-600', 'border-indigo-500');
+                }
+            }
+            updateProgressUI();
+            updatePlayButtonUI(isPlaying);
+        }
+
+        if (zenModeBtn) zenModeBtn.addEventListener('click', () => toggleZenMode());
+        if (zenExitBtn) zenExitBtn.addEventListener('click', () => toggleZenMode(false));
+
+        // Keyboard Shortcuts: 'Z' for Zen Mode, 'Escape' to Exit Zen Mode
+        document.addEventListener('keydown', (e) => {
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.isContentEditable) return;
+            if (e.key === 'z' || e.key === 'Z') {
+                e.preventDefault();
+                toggleZenMode();
+            } else if (e.key === 'Escape' && isZenMode) {
+                e.preventDefault();
+                toggleZenMode(false);
+            }
+        });
+
+        // Mini bar & Zen floating player controls wire-up
+        ['mini', 'zen'].forEach(prefix => {
+            const prev = document.getElementById(`${prefix}-prev-btn`);
+            if (prev) prev.addEventListener('click', () => prevBtn.click());
+
+            const play = document.getElementById(`${prefix}-play-btn`);
+            if (play) play.addEventListener('click', () => playBtn.click());
+
+            const pause = document.getElementById(`${prefix}-pause-btn`);
+            if (pause) pause.addEventListener('click', () => pauseBtn.click());
+
+            const next = document.getElementById(`${prefix}-next-btn`);
+            if (next) next.addEventListener('click', () => nextBtn.click());
+        });
 
         async function extractEpubFile(fileOrBlob) {
             const zip = await JSZip.loadAsync(fileOrBlob);
@@ -1368,9 +2077,33 @@
         }
 
         // Initialize Player on Load
-        loadTextIntoReader(textInput.value, currentBookTitle);
-        loadSavedHistory();
-        checkUrlBookParameter();
+        loadUIState();
+        renderLibraryList();
+
+        (async () => {
+            const params = new URLSearchParams(window.location.search);
+            const bookUrl = params.get('book');
+            if (bookUrl) {
+                await checkUrlBookParameter();
+            } else {
+                const activeId = localStorage.getItem(STORAGE_KEY_ACTIVE_BOOK);
+                if (activeId) {
+                    const savedBook = await libraryStore.get(activeId);
+                    if (savedBook) {
+                        currentBookId = savedBook.id;
+                        currentBookTitle = savedBook.title;
+                        textInput.value = savedBook.text;
+                        loadTextIntoReader(savedBook.text, savedBook.title, savedBook.id);
+                        await renderLibraryList();
+                    } else {
+                        loadTextIntoReader('', 'No book loaded');
+                    }
+                } else {
+                    loadTextIntoReader('', 'No book loaded');
+                }
+            }
+            loadSavedHistory();
+        })();
     </script>
 </body>
 </html>

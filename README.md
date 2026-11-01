@@ -8,6 +8,14 @@ Designed to run effortlessly both on **GitHub Pages** and **locally**.
 
 ## ✨ Key Features
 
+- **Persistent Local Library & Offline Storage**
+  - **IndexedDB Storage**: Uploaded `.epub`, `.pdf`, `.txt`, and pasted documents are automatically stored locally in browser `IndexedDB` (with `localStorage` fallback). No data is sent to external servers.
+  - **Library Management**: View all saved books with format badges (`EPUB`, `PDF`, `TXT`), word and paragraph counts. Switch between books with 1 click or remove unwanted books anytime.
+  - **Quick Book Search**: Instant filter bar across all books saved in your local library.
+  - **Save Pasted Text to Library**: Save custom text typed or pasted in the editor as a distinct book entry with a title.
+- **Collapsible Workspace & Distraction-Free "Zen Mode"**
+  - **Zen Mode**: 1-click toggle in the header (or hotkey `Z` / `Escape`) that collapses all tool panels and the audio deck, centering the reader at optimal reading width with comfortable margins, expanded height, and an unobtrusive floating playback pill.
+  - **Independently Collapsible Areas**: The Audio Transport Deck can be collapsed into a compact mini transport bar; the Sidebar can be hidden to give the reader full width; and each sidebar panel (Local Library, History, Editor) can be individually collapsed. All panel preferences are persisted.
 - **Unified Client-Side Book Parser (`.epub`, `.pdf`, `.txt`)**
   - **EPUB**: Extracts chapters in accurate reading order by parsing `META-INF/container.xml` and the OPF `<spine>` manifest in-browser via [JSZip](https://stuk.github.io/jszip/), with automatic fallback to sorted XHTML/HTML files.
   - **PDF**: Extracts text page-by-page and reconstructs clean paragraphs using [PDF.js](https://mozilla.github.io/pdf.js/).
@@ -118,7 +126,7 @@ All application logic, styles, and UI components live in [`index.html`](./index.
 | **EPUB Parser** | [JSZip 3.10.1](https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js) + `DOMParser` | Client-side `.epub` archive extraction and OPF `<spine>` chapter ordering |
 | **PDF Parser** | [PDF.js 3.11.174](https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js) | Client-side `.pdf` text extraction and line-to-paragraph reconstruction |
 | **MP3 Encoder** | [LameJS 1.2.1](https://cdnjs.cloudflare.com/ajax/libs/lamejs/1.2.1/lame.min.js) + Web Audio API | In-browser 128kbps MP3 encoding & Cloud TTS MP3 buffer merging |
-| **State Storage** | `window.localStorage` | Persistent playback history (`studio_audiobook_history_v2`) & last position (`studio_audiobook_last_pos_v2`) |
+| **State & Library Storage** | `IndexedDB` + `window.localStorage` | Persistent client-side book library storage (`epubfm_local_library`), playback history (`studio_audiobook_history_v2`) & workspace UI preferences |
 | **Local Server** | [`server.js`](./server.js) (Node.js built-ins) | Zero-dependency static HTTP server for local development and `?book=` loading |
 
 ---
