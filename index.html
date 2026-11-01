@@ -271,21 +271,17 @@
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
                         </button>
 
-                        <button id="play-btn" class="bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-2.5 rounded-xl font-semibold flex items-center space-x-2 shadow-lg shadow-indigo-600/30 transition">
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg>
+                        <button id="play-btn" class="bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-2.5 rounded-xl font-semibold flex items-center space-x-2 shadow-lg shadow-indigo-600/30 transition" title="Play / Pause (Space)">
+                            <svg id="play-icon" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg>
                             <span id="play-text">Play</span>
-                        </button>
-
-                        <button id="pause-btn" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white px-4 py-2.5 rounded-xl text-sm font-medium transition">
-                            Pause / Resume
-                        </button>
-
-                        <button id="stop-btn" class="bg-rose-600/20 hover:bg-rose-600 border border-rose-500/30 text-rose-300 hover:text-white px-4 py-2.5 rounded-xl text-sm font-medium transition">
-                            Stop
                         </button>
 
                         <button id="next-btn" class="p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition" title="Next Paragraph">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        </button>
+
+                        <button id="stop-btn" class="bg-rose-600/20 hover:bg-rose-600 border border-rose-500/30 text-rose-300 hover:text-white px-4 py-2.5 rounded-xl text-sm font-medium transition" title="Stop Playback">
+                            Stop
                         </button>
                     </div>
 
@@ -305,11 +301,9 @@
                     <button id="mini-prev-btn" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300" title="Previous Paragraph">
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
                     </button>
-                    <button id="mini-play-btn" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1 rounded-lg font-semibold flex items-center space-x-1 transition shadow-sm">
+                    <button id="mini-play-btn" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1 rounded-lg font-semibold flex items-center space-x-1.5 transition shadow-sm">
+                        <svg id="mini-play-icon" class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg>
                         <span id="mini-play-text">Play</span>
-                    </button>
-                    <button id="mini-pause-btn" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white px-2 py-1 rounded-lg text-xs transition">
-                        Pause
                     </button>
                     <button id="mini-next-btn" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300" title="Next Paragraph">
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
@@ -553,12 +547,8 @@
         </button>
 
         <button id="zen-play-btn" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3.5 py-1.5 rounded-xl font-semibold flex items-center space-x-1.5 shadow-md shadow-indigo-600/30 transition">
-            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg>
+            <svg id="zen-play-icon" class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg>
             <span id="zen-play-text">Play</span>
-        </button>
-
-        <button id="zen-pause-btn" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white px-2.5 py-1.5 rounded-lg text-xs font-medium transition">
-            Pause
         </button>
 
         <button id="zen-next-btn" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition" title="Next Paragraph">
@@ -592,7 +582,6 @@
         const pitchValue = document.getElementById('pitch-value');
         const playBtn = document.getElementById('play-btn');
         const playText = document.getElementById('play-text');
-        const pauseBtn = document.getElementById('pause-btn');
         const stopBtn = document.getElementById('stop-btn');
         const prevBtn = document.getElementById('prev-btn');
         const nextBtn = document.getElementById('next-btn');
@@ -1227,12 +1216,29 @@
             if (zenPos) zenPos.textContent = `Para ${current} / ${total}`;
         }
 
+        const PLAY_ICON_SVG = '<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path>';
+        const PAUSE_ICON_SVG = '<path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path>';
+
         function updatePlayButtonUI(playing) {
-            playText.textContent = playing ? 'Restart Para' : 'Play';
+            const playIcon = document.getElementById('play-icon');
+            if (playIcon) playIcon.innerHTML = playing ? PAUSE_ICON_SVG : PLAY_ICON_SVG;
+            const text = playing ? 'Pause' : (synth.paused ? 'Resume' : 'Play');
+            if (playText) playText.textContent = text;
+            if (playBtn) playBtn.title = playing ? 'Pause Playback (Space)' : (synth.paused ? 'Resume Playback (Space)' : 'Start Playback (Space)');
+
+            const miniPlayIcon = document.getElementById('mini-play-icon');
+            if (miniPlayIcon) miniPlayIcon.innerHTML = playing ? PAUSE_ICON_SVG : PLAY_ICON_SVG;
             const miniPlay = document.getElementById('mini-play-text');
-            if (miniPlay) miniPlay.textContent = playing ? 'Restart' : 'Play';
+            if (miniPlay) miniPlay.textContent = text;
+            const miniPlayBtn = document.getElementById('mini-play-btn');
+            if (miniPlayBtn) miniPlayBtn.title = playing ? 'Pause (Space)' : (synth.paused ? 'Resume (Space)' : 'Play (Space)');
+
+            const zenPlayIcon = document.getElementById('zen-play-icon');
+            if (zenPlayIcon) zenPlayIcon.innerHTML = playing ? PAUSE_ICON_SVG : PLAY_ICON_SVG;
             const zenPlay = document.getElementById('zen-play-text');
-            if (zenPlay) zenPlay.textContent = playing ? 'Restart' : 'Play';
+            if (zenPlay) zenPlay.textContent = text;
+            const zenPlayBtn = document.getElementById('zen-play-btn');
+            if (zenPlayBtn) zenPlayBtn.title = playing ? 'Pause (Space)' : (synth.paused ? 'Resume (Space)' : 'Play (Space)');
         }
 
         function setStatus(message, state = 'ready') {
@@ -1244,24 +1250,47 @@
             else statusDot.className += 'bg-emerald-400';
         }
 
-        // 6. Transport Event Listeners
-        playBtn.addEventListener('click', () => {
-            speakCurrentParagraph(true, 'Started');
-        });
+        function togglePlayPause() {
+            if (!paragraphs.length) {
+                if (textInput.value.trim()) {
+                    loadTextIntoReader(textInput.value);
+                } else {
+                    setStatus('No paragraphs to read. Please upload or paste a book first.', 'error');
+                    return;
+                }
+            }
 
-        pauseBtn.addEventListener('click', () => {
-            if (synth.speaking) {
-                if (synth.paused) {
+            if (isPlaying) {
+                // If currently playing -> PAUSE
+                if (synth.speaking) {
+                    synth.pause();
+                }
+                isPlaying = false;
+                updatePlayButtonUI(false);
+                setStatus(`Paused at paragraph ${currentIndex + 1}.`, 'paused');
+                logHistoryEvent('Paused', currentIndex);
+            } else {
+                // If currently paused or stopped -> PLAY / RESUME
+                if (synth.paused && synth.speaking) {
                     synth.resume();
+                    // Fallback in case browser pauses silently
+                    setTimeout(() => {
+                        if (synth.paused) {
+                            speakCurrentParagraph(true, 'Started');
+                        }
+                    }, 120);
+                    isPlaying = true;
+                    updatePlayButtonUI(true);
                     setStatus(`Resumed paragraph ${currentIndex + 1}...`, 'playing');
                     logHistoryEvent('Started', currentIndex);
                 } else {
-                    synth.pause();
-                    setStatus(`Paused at paragraph ${currentIndex + 1}.`, 'paused');
-                    logHistoryEvent('Paused', currentIndex);
+                    speakCurrentParagraph(true, 'Started');
                 }
             }
-        });
+        }
+
+        // 6. Transport Event Listeners
+        playBtn.addEventListener('click', togglePlayPause);
 
         stopBtn.addEventListener('click', () => {
             if (isPlaying || synth.speaking) {
@@ -1694,7 +1723,7 @@
         if (zenModeBtn) zenModeBtn.addEventListener('click', () => toggleZenMode());
         if (zenExitBtn) zenExitBtn.addEventListener('click', () => toggleZenMode(false));
 
-        // Keyboard Shortcuts: 'Z' for Zen Mode, 'Escape' to Exit Zen Mode
+        // Keyboard Shortcuts: 'Z' for Zen Mode, 'Escape' to Exit Zen Mode, 'Space' to Play/Pause
         document.addEventListener('keydown', (e) => {
             if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.isContentEditable) return;
             if (e.key === 'z' || e.key === 'Z') {
@@ -1703,6 +1732,9 @@
             } else if (e.key === 'Escape' && isZenMode) {
                 e.preventDefault();
                 toggleZenMode(false);
+            } else if (e.code === 'Space' || e.key === ' ') {
+                e.preventDefault();
+                togglePlayPause();
             }
         });
 
@@ -1713,9 +1745,6 @@
 
             const play = document.getElementById(`${prefix}-play-btn`);
             if (play) play.addEventListener('click', () => playBtn.click());
-
-            const pause = document.getElementById(`${prefix}-pause-btn`);
-            if (pause) pause.addEventListener('click', () => pauseBtn.click());
 
             const next = document.getElementById(`${prefix}-next-btn`);
             if (next) next.addEventListener('click', () => nextBtn.click());
