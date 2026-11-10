@@ -94,6 +94,12 @@
         }
 
         /* Zen Mode (Distraction-Free Reading Mode) */
+        body.zen-mode header {
+            display: none !important;
+        }
+        body.zen-mode main {
+            padding-top: 1rem !important;
+        }
         body.zen-mode #audio-deck {
             display: none !important;
         }
@@ -111,8 +117,8 @@
             width: 100% !important;
         }
         body.zen-mode #reader-display {
-            height: calc(100vh - 180px) !important;
-            max-height: calc(100vh - 180px) !important;
+            height: calc(100vh - 105px) !important;
+            max-height: calc(100vh - 105px) !important;
             font-size: 1.15rem !important;
             line-height: 1.85 !important;
             padding: 2.25rem !important;
@@ -124,6 +130,249 @@
         }
         body.zen-mode #expand-sidebar-btn {
             display: none !important;
+        }
+
+        /* ==========================================
+           Light Theme Color Scheme & Readability Overrides
+           ========================================== */
+        body.theme-light {
+            background-color: #f8fafc !important; /* slate-50 */
+            color: #0f172a !important; /* slate-900 */
+        }
+        body.theme-light ::-webkit-scrollbar-track {
+            background: rgba(226, 232, 240, 0.6);
+        }
+        body.theme-light ::-webkit-scrollbar-thumb {
+            background: rgba(148, 163, 184, 0.6);
+        }
+        body.theme-light ::-webkit-scrollbar-thumb:hover {
+            background: rgba(100, 116, 139, 0.8);
+        }
+
+        /* Top Header in Light Mode */
+        body.theme-light header {
+            background-color: rgba(255, 255, 255, 0.95) !important;
+            border-bottom-color: #e2e8f0 !important;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+        }
+        body.theme-light header h1 {
+            background: none !important;
+            -webkit-text-fill-color: #0f172a !important;
+            color: #0f172a !important;
+        }
+        body.theme-light #book-title-display {
+            color: #64748b !important;
+        }
+
+        /* Audio Deck in Light Mode */
+        body.theme-light #audio-deck {
+            background-color: #ffffff !important;
+            border-color: #e2e8f0 !important;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05) !important;
+        }
+        body.theme-light #audio-deck > div:first-child {
+            background-color: #f8fafc !important;
+            border-bottom-color: #e2e8f0 !important;
+        }
+        body.theme-light #audio-deck-mini {
+            background-color: #f8fafc !important;
+            border-top: 1px solid #e2e8f0 !important;
+        }
+        body.theme-light #collapse-audio-btn {
+            background-color: #f1f5f9 !important;
+            border-color: #e2e8f0 !important;
+            color: #475569 !important;
+        }
+        body.theme-light #collapse-audio-btn:hover {
+            background-color: #e2e8f0 !important;
+            color: #0f172a !important;
+        }
+        body.theme-light #audio-deck label,
+        body.theme-light #audio-deck .text-slate-400 {
+            color: #64748b !important;
+        }
+        body.theme-light #voice-select,
+        body.theme-light #jump-input {
+            background-color: #f8fafc !important;
+            border-color: #cbd5e1 !important;
+            color: #0f172a !important;
+        }
+        body.theme-light #jump-btn,
+        body.theme-light #prev-btn,
+        body.theme-light #next-btn,
+        body.theme-light #mini-prev-btn,
+        body.theme-light #mini-next-btn {
+            background-color: #f1f5f9 !important;
+            border-color: #e2e8f0 !important;
+            color: #334155 !important;
+        }
+        body.theme-light #jump-btn:hover,
+        body.theme-light #prev-btn:hover,
+        body.theme-light #next-btn:hover,
+        body.theme-light #mini-prev-btn:hover,
+        body.theme-light #mini-next-btn:hover {
+            background-color: #e2e8f0 !important;
+            color: #0f172a !important;
+        }
+        body.theme-light #progress-scrubber {
+            background-color: #e2e8f0 !important;
+        }
+        body.theme-light #status-bar {
+            color: #475569 !important;
+        }
+        body.theme-light #mini-pos-display {
+            color: #4f46e5 !important;
+        }
+        body.theme-light #mini-time-display {
+            color: #64748b !important;
+        }
+        body.theme-light #stop-btn {
+            background-color: #fff1f2 !important;
+            border-color: #fecdd3 !important;
+            color: #e11d48 !important;
+        }
+        body.theme-light #stop-btn:hover {
+            background-color: #e11d48 !important;
+            color: #ffffff !important;
+        }
+        body.theme-light #bookmark-btn {
+            background-color: #fefce8 !important;
+            border-color: #fef08a !important;
+            color: #b45309 !important;
+        }
+        body.theme-light #bookmark-btn:hover {
+            background-color: #fef08a !important;
+            color: #78350f !important;
+        }
+
+        /* Reader Area in Light Mode */
+        body.theme-light #reader-display {
+            background-color: #ffffff !important;
+            border-color: #e2e8f0 !important;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05) !important;
+        }
+        body.theme-light #reader-search {
+            background-color: #ffffff !important;
+            border-color: #cbd5e1 !important;
+            color: #0f172a !important;
+        }
+        body.theme-light .para-content {
+            color: #1e293b !important; /* slate-800 for high readability */
+        }
+        body.theme-light #reader-display > div:hover {
+            background-color: #f8fafc !important;
+        }
+        body.theme-light .playing-para {
+            background-color: rgba(99, 102, 241, 0.09) !important;
+            border-left-color: #4f46e5 !important;
+        }
+        body.theme-light #expand-sidebar-btn {
+            background-color: #ffffff !important;
+            border-color: #cbd5e1 !important;
+            color: #4f46e5 !important;
+        }
+
+        /* Panels and Sidebar in Light Mode */
+        body.theme-light .panel-card {
+            background-color: #ffffff !important;
+            border-color: #e2e8f0 !important;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04) !important;
+        }
+        body.theme-light .panel-header {
+            border-bottom-color: #f1f5f9 !important;
+        }
+        body.theme-light .panel-header h3 {
+            color: #0f172a !important;
+        }
+        body.theme-light #text-input {
+            background-color: #f8fafc !important;
+            border-color: #cbd5e1 !important;
+            color: #0f172a !important;
+        }
+        body.theme-light #library-search {
+            background-color: #f8fafc !important;
+            border-color: #cbd5e1 !important;
+            color: #0f172a !important;
+        }
+        body.theme-light .book-card {
+            background-color: #f8fafc !important;
+            border-color: #e2e8f0 !important;
+        }
+        body.theme-light .book-card:hover {
+            background-color: #f1f5f9 !important;
+            border-color: #cbd5e1 !important;
+        }
+        body.theme-light .book-card.border-indigo-500\/50 {
+            background-color: #eef2ff !important;
+            border-color: #a5b4fc !important;
+        }
+        body.theme-light .history-entry {
+            background-color: #f8fafc !important;
+            border-color: #e2e8f0 !important;
+        }
+        body.theme-light .history-entry:hover {
+            background-color: #f1f5f9 !important;
+        }
+        body.theme-light #format-paras-btn,
+        body.theme-light #load-text-btn,
+        body.theme-light #collapse-sidebar-btn,
+        body.theme-light #zen-mode-btn,
+        body.theme-light #theme-toggle-btn,
+        body.theme-light #pwa-install-btn {
+            background-color: #f1f5f9 !important;
+            border-color: #e2e8f0 !important;
+            color: #334155 !important;
+        }
+        body.theme-light #format-paras-btn:hover,
+        body.theme-light #load-text-btn:hover,
+        body.theme-light #collapse-sidebar-btn:hover,
+        body.theme-light #zen-mode-btn:hover,
+        body.theme-light #theme-toggle-btn:hover,
+        body.theme-light #pwa-install-btn:hover {
+            background-color: #e2e8f0 !important;
+            color: #0f172a !important;
+        }
+
+        /* Floating Zen Pill in Light Mode */
+        body.theme-light #zen-floating-player {
+            background-color: rgba(255, 255, 255, 0.96) !important;
+            border-color: #cbd5e1 !important;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1) !important;
+            color: #0f172a !important;
+        }
+        body.theme-light #zen-prev-btn,
+        body.theme-light #zen-next-btn,
+        body.theme-light #zen-theme-btn,
+        body.theme-light #zen-exit-btn {
+            background-color: #f1f5f9 !important;
+            color: #334155 !important;
+        }
+        body.theme-light #zen-prev-btn:hover,
+        body.theme-light #zen-next-btn:hover,
+        body.theme-light #zen-theme-btn:hover,
+        body.theme-light #zen-exit-btn:hover {
+            background-color: #e2e8f0 !important;
+            color: #0f172a !important;
+        }
+        body.theme-light #zen-floating-player .w-px {
+            background-color: #cbd5e1 !important;
+        }
+
+        /* MP3 Modal in Light Mode */
+        body.theme-light #mp3-modal > div > div {
+            background-color: #ffffff !important;
+            border-color: #e2e8f0 !important;
+            color: #0f172a !important;
+        }
+        body.theme-light #mp3-modal .bg-slate-800\/50 {
+            background-color: #f8fafc !important;
+            border-color: #e2e8f0 !important;
+        }
+        body.theme-light #mp3-modal input,
+        body.theme-light #mp3-modal select {
+            background-color: #ffffff !important;
+            border-color: #cbd5e1 !important;
+            color: #0f172a !important;
         }
     </style>
 </head>
@@ -154,6 +403,16 @@
                 <button id="zen-mode-btn" class="bg-slate-800 hover:bg-slate-700 text-indigo-300 border border-slate-700 hover:border-indigo-500/50 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium transition flex items-center gap-1.5 shadow-sm" title="Toggle Zen Reading Mode (Hotkey: Z)">
                     <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path></svg>
                     <span id="zen-btn-label">Zen Mode</span>
+                </button>
+
+                <button id="theme-toggle-btn" class="bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 hover:border-indigo-500/50 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium transition flex items-center gap-1.5 shadow-sm" title="Toggle Dark / Light Theme (Hotkey: T)">
+                    <svg id="theme-icon-sun" class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                    </svg>
+                    <svg id="theme-icon-moon" class="w-4 h-4 text-indigo-500 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+                    </svg>
+                    <span id="theme-label">Light Mode</span>
                 </button>
 
                 <button id="pwa-install-btn" class="hidden bg-slate-800 hover:bg-slate-700 text-indigo-300 border border-slate-700 hover:border-indigo-500/50 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium transition items-center gap-1.5 shadow-sm" title="Install epubfm as a standalone application">
@@ -309,10 +568,6 @@
                     <span id="mini-pos-display" class="font-medium text-indigo-300">Paragraph 0 of 0</span>
                     <span id="mini-time-display" class="hidden sm:inline">Estimated remaining: 0 mins</span>
                 </div>
-                <button id="expand-deck-btn" class="text-xs text-indigo-400 hover:text-indigo-300 flex items-center gap-1 font-medium py-1 px-2 rounded-lg hover:bg-slate-800 transition">
-                    <span>Expand Deck</span>
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                </button>
             </div>
         </section>
 
@@ -560,6 +815,13 @@
 
         <div class="h-4 w-px bg-slate-700 mx-1"></div>
 
+        <button id="zen-theme-btn" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition flex items-center justify-center" title="Toggle Theme (Dark / Light)">
+            <svg id="zen-theme-sun" class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+            <svg id="zen-theme-moon" class="w-4 h-4 text-indigo-400 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+        </button>
+
+        <div class="h-4 w-px bg-slate-700 mx-1"></div>
+
         <button id="zen-exit-btn" class="text-slate-400 hover:text-white px-2 py-1 rounded-lg hover:bg-slate-800 transition flex items-center gap-1 shrink-0" title="Exit Zen Mode (Esc or Z)">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
             <span>Exit Zen</span>
@@ -614,7 +876,6 @@
         const audioDeck = document.getElementById('audio-deck');
         const collapseAudioBtn = document.getElementById('collapse-audio-btn');
         const collapseAudioLabel = document.getElementById('collapse-audio-label');
-        const expandDeckBtn = document.getElementById('expand-deck-btn');
         const sidebarColumn = document.getElementById('sidebar-column');
         const collapseSidebarBtn = document.getElementById('collapse-sidebar-btn');
         const expandSidebarBtn = document.getElementById('expand-sidebar-btn');
@@ -622,6 +883,13 @@
         const zenBtnLabel = document.getElementById('zen-btn-label');
         const zenFloatingPlayer = document.getElementById('zen-floating-player');
         const zenExitBtn = document.getElementById('zen-exit-btn');
+        const themeToggleBtn = document.getElementById('theme-toggle-btn');
+        const themeLabel = document.getElementById('theme-label');
+        const themeIconSun = document.getElementById('theme-icon-sun');
+        const themeIconMoon = document.getElementById('theme-icon-moon');
+        const zenThemeBtn = document.getElementById('zen-theme-btn');
+        const zenThemeSun = document.getElementById('zen-theme-sun');
+        const zenThemeMoon = document.getElementById('zen-theme-moon');
 
         // Application State
         let voices = [];
@@ -636,6 +904,7 @@
         const STORAGE_KEY_LAST_POS = 'studio_audiobook_last_pos_v2';
         const STORAGE_KEY_ACTIVE_BOOK = 'epubfm_active_book_id_v2';
         const STORAGE_KEY_UI_STATE = 'epubfm_ui_state_v2';
+        const STORAGE_KEY_THEME = 'epubfm_theme_mode_v2';
 
         // ========================================================
         // Local Library Storage Service (IndexedDB + fallback)
@@ -1793,7 +2062,6 @@
         }
 
         if (collapseAudioBtn) collapseAudioBtn.addEventListener('click', () => toggleAudioDeck());
-        if (expandDeckBtn) expandDeckBtn.addEventListener('click', () => toggleAudioDeck(false));
 
         function toggleSidebar(force) {
             const next = typeof force === 'boolean' ? force : !uiState.sidebarCollapsed;
@@ -1845,7 +2113,46 @@
         if (zenModeBtn) zenModeBtn.addEventListener('click', () => toggleZenMode());
         if (zenExitBtn) zenExitBtn.addEventListener('click', () => toggleZenMode(false));
 
-        // Keyboard Shortcuts: 'Z' for Zen Mode, 'Escape' to Exit Zen Mode, 'Space' to Play/Pause
+        // Master Theme Management (Dark / Light)
+        let currentTheme = 'dark';
+
+        function loadTheme() {
+            try {
+                currentTheme = localStorage.getItem(STORAGE_KEY_THEME) || 'dark';
+            } catch (e) {
+                currentTheme = 'dark';
+            }
+            applyTheme(currentTheme);
+        }
+
+        function applyTheme(theme) {
+            currentTheme = theme;
+            try {
+                localStorage.setItem(STORAGE_KEY_THEME, theme);
+            } catch (e) {}
+
+            const isLight = theme === 'light';
+            if (isLight) {
+                document.body.classList.add('theme-light');
+            } else {
+                document.body.classList.remove('theme-light');
+            }
+
+            if (themeLabel) themeLabel.textContent = isLight ? 'Dark Mode' : 'Light Mode';
+            if (themeIconSun) themeIconSun.classList.toggle('hidden', isLight);
+            if (themeIconMoon) themeIconMoon.classList.toggle('hidden', !isLight);
+            if (zenThemeSun) zenThemeSun.classList.toggle('hidden', isLight);
+            if (zenThemeMoon) zenThemeMoon.classList.toggle('hidden', !isLight);
+        }
+
+        function toggleTheme() {
+            applyTheme(currentTheme === 'light' ? 'dark' : 'light');
+        }
+
+        if (themeToggleBtn) themeToggleBtn.addEventListener('click', () => toggleTheme());
+        if (zenThemeBtn) zenThemeBtn.addEventListener('click', () => toggleTheme());
+
+        // Keyboard Shortcuts: 'Z' for Zen Mode, 'Escape' to Exit Zen Mode, 'Space' to Play/Pause, 'T' for Theme Toggle
         document.addEventListener('keydown', (e) => {
             if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.isContentEditable) return;
             if (e.key === 'z' || e.key === 'Z') {
@@ -1854,6 +2161,9 @@
             } else if (e.key === 'Escape' && isZenMode) {
                 e.preventDefault();
                 toggleZenMode(false);
+            } else if (e.key === 't' || e.key === 'T') {
+                e.preventDefault();
+                toggleTheme();
             } else if (e.code === 'Space' || e.key === ' ') {
                 e.preventDefault();
                 togglePlayPause();
@@ -2631,6 +2941,7 @@
         }
 
         // Initialize Player on Load
+        loadTheme();
         loadUIState();
         renderLibraryList();
 
