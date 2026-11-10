@@ -18,7 +18,7 @@ Designed to run effortlessly both on **GitHub Pages** and **locally**.
   - **Independently Collapsible Areas**: The Audio Transport Deck can be collapsed into a compact mini transport bar; the Sidebar can be hidden to give the reader full width; and each sidebar panel (Local Library, History, Editor) can be individually collapsed. All panel preferences are persisted.
 - **Unified Client-Side Book Parser (`.epub`, `.pdf`, `.txt`)**
   - **EPUB**: Extracts chapters in accurate reading order by parsing `META-INF/container.xml` and the OPF `<spine>` manifest in-browser via [JSZip](https://stuk.github.io/jszip/), with automatic fallback to sorted XHTML/HTML files.
-  - **PDF**: Extracts text page-by-page and reconstructs clean paragraphs using [PDF.js](https://mozilla.github.io/pdf.js/).
+  - **PDF**: Intelligent book parser that skips running headers, footers, page numbers, and footnotes; merges multi-line prose into natural EPUB-like paragraphs; de-hyphenates split words; joins cross-page sentence continuations; and handles two-column layouts using [PDF.js](https://mozilla.github.io/pdf.js/).
   - **TXT & Raw Text Editor**: Upload plain text files or paste/edit chapters directly in the built-in Raw Book Text editor.
 - **Interactive Reader & Live Word Highlighting**
   - Click any paragraph card to immediately start playback from that exact position.

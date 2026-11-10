@@ -1805,39 +1805,463 @@
             return extractedText;
         }
 
+        // -------------------------------------------------------------
+        // Enhanced PDF Book Extractor & EPUB-style Paragraph Synthesizer
+        // Optimized for Natural Audiobook Narration & Listener Flow
+        // -------------------------------------------------------------
+
+        function cleanPdfTypography(text) {
+            if (!text) return '';
+            return text
+                // Replace typographic ligatures with plain letters
+                .replace(/\uFB01/g, 'fi')
+                .replace(/\uFB02/g, 'fl')
+                .replace(/\uFB03/g, 'ffi')
+                .replace(/\uFB04/g, 'ffl')
+                .replace(/\uFB00/g, 'ff')
+                .replace(/\uFB05/g, 'ft')
+                .replace(/\uFB06/g, 'st')
+                .replace(/\u0152/g, 'OE')
+                .replace(/\u0153/g, 'oe')
+                .replace(/\u00C6/g, 'AE')
+                .replace(/\u00E6/g, 'ae')
+                // Remove soft hyphens & zero-width spacing characters
+                .replace(/[\u00AD\u200B\u200C\u200D\uFEFF]/g, '')
+                // Normalize non-breaking and thin spaces
+                .replace(/[\u00A0\u202F\u2007\u2009]/g, ' ')
+                // Clean repetitive dot leaders common in tables of contents (e.g., "Chapter 1 ............ 15")
+                .replace(/\s*\.{3,}\s*/g, ' — ')
+                // Normalize smart quotes and apostrophes for smooth speech synthesis
+                .replace(/[\u2018\u2019\u201A\u201B]/g, "'")
+                .replace(/[\u201C\u201D\u201E\u201F]/g, '"')
+                // Wrap em-dashes and en-dashes with spaces so TTS voices pause naturally instead of rushing or saying 'hyphen'
+                .replace(/[\u2013\u2014]/g, ' — ')
+                // Normalize multiple spaces/tabs to a single space
+                .replace(/[ \t]+/g, ' ')
+                .trim();
+        }
+
+        function isPdfStandalonePageNumberOrHeader(lineText) {
+            const t = lineText.trim();
+            if (!t) return true;
+
+            // Standalone digits (e.g., "42", "125")
+            if (/^\d{1,4}$/.test(t)) return true;
+
+            // Standalone Roman numerals (e.g., "iv", "xii", "VII")
+            if (/^[ivxlcdm]{1,8}$/i.test(t)) return true;
+
+            // Number with ornaments (e.g., "- 42 -", "~ 15 ~", "[ 3 ]", "(iv)")
+            if (/^[-–—~•*\[(]\s*(\d+|[ivxlcdm]+)\s*[-–—~•*\])]$/i.test(t)) return true;
+
+            // "Page 12" or "Page 12 of 300" or "Pg. 12"
+            if (/^(?:page|pg\.?)\s+\d+(?:\s*(?:of|\/)\s*\d+)?$/i.test(t)) return true;
+
+            // Standalone header patterns with page numbers: e.g., "12 CHAPTER TWO" or "CHAPTER TWO 12"
+            if (/^\d{1,4}\s+[A-Z\s]{3,35}$/.test(t) || /^[A-Z\s]{3,35}\s+\d{1,4}$/.test(t)) return true;
+
+            return false;
+        }
+
+        function groupPageItemsIntoLines(items, viewportHeight, viewportWidth) {
+            if (!items || items.length === 0) return [];
+
+            const validItems = items.filter(it => it && typeof it.str === 'string' && it.str.trim().length > 0);
+            if (validItems.length === 0) return [];
+
+            // Convert PDF bottom-up Y coordinate to top-down reading coordinate (topY)
+            const processed = validItems.map(it => {
+                const x = it.transform ? it.transform[4] : 0;
+                const pdfY = it.transform ? it.transform[5] : 0;
+                const topY = viewportHeight ? (viewportHeight - pdfY) : pdfY;
+                const fontSize = Math.abs(it.transform ? it.transform[0] : (it.height || 12)) || 12;
+                const width = it.width || (it.str.length * fontSize * 0.5);
+                return {
+                    str: it.str,
+                    x: x,
+                    pdfY: pdfY,
+                    topY: topY,
+                    width: width,
+                    fontSize: fontSize
+                };
+            });
+
+            // Sort top-to-bottom, then left-to-right
+            processed.sort((a, b) => {
+                const dy = a.topY - b.topY;
+                if (Math.abs(dy) > 3) return dy;
+                return a.x - b.x;
+            });
+
+            // Cluster items sharing a similar baseline into visual horizontal lines
+            const lines = [];
+            let currentLine = null;
+
+            for (const item of processed) {
+                if (!currentLine) {
+                    currentLine = {
+                        topY: item.topY,
+                        pdfY: item.pdfY,
+                        minX: item.x,
+                        maxX: item.x + item.width,
+                        maxFontSize: item.fontSize,
+                        items: [item]
+                    };
+                } else {
+                    const yTolerance = Math.min(4, Math.max(2.5, currentLine.maxFontSize * 0.35));
+                    if (Math.abs(item.topY - currentLine.topY) <= yTolerance) {
+                        currentLine.items.push(item);
+                        currentLine.maxX = Math.max(currentLine.maxX, item.x + item.width);
+                        currentLine.maxFontSize = Math.max(currentLine.maxFontSize, item.fontSize);
+                    } else {
+                        lines.push(currentLine);
+                        currentLine = {
+                            topY: item.topY,
+                            pdfY: item.pdfY,
+                            minX: item.x,
+                            maxX: item.x + item.width,
+                            maxFontSize: item.fontSize,
+                            items: [item]
+                        };
+                    }
+                }
+            }
+            if (currentLine) lines.push(currentLine);
+
+            // Assemble text for each line
+            let formattedLines = lines.map(line => {
+                line.items.sort((a, b) => a.x - b.x);
+                let lineStr = '';
+                for (let i = 0; i < line.items.length; i++) {
+                    const item = line.items[i];
+                    if (i > 0) {
+                        const prev = line.items[i - 1];
+                        const spaceGap = item.x - (prev.x + prev.width);
+                        if (spaceGap > 1.8 && !lineStr.endsWith(' ') && !item.str.startsWith(' ')) {
+                            lineStr += ' ';
+                        }
+                    }
+                    lineStr += item.str;
+                }
+
+                const text = cleanPdfTypography(lineStr);
+                return {
+                    text: text,
+                    topY: line.topY,
+                    pdfY: line.pdfY,
+                    x: line.minX,
+                    right: line.maxX,
+                    width: line.maxX - line.minX,
+                    fontSize: line.maxFontSize
+                };
+            }).filter(l => l.text.length > 0);
+
+            // Detect and reorder 2-column pages (left column top-to-bottom, then right column top-to-bottom)
+            if (viewportWidth && formattedLines.length >= 8) {
+                const mid = viewportWidth / 2;
+                let col1Count = 0;
+                let col2Count = 0;
+                let fullSpanCount = 0;
+
+                formattedLines.forEach(l => {
+                    if (l.width > viewportWidth * 0.6) {
+                        fullSpanCount++;
+                    } else if (l.right < mid + 20) {
+                        col1Count++;
+                    } else if (l.x > mid - 20) {
+                        col2Count++;
+                    }
+                });
+
+                if (col1Count >= 3 && col2Count >= 3 && (fullSpanCount / formattedLines.length) < 0.25) {
+                    const col1 = formattedLines.filter(l => l.right < mid + 20).sort((a, b) => a.topY - b.topY);
+                    const col2 = formattedLines.filter(l => l.x > mid - 20).sort((a, b) => a.topY - b.topY);
+                    const fullWidth = formattedLines.filter(l => l.width > viewportWidth * 0.6);
+                    const topFull = fullWidth.filter(l => l.topY < viewportHeight * 0.25);
+                    const bottomFull = fullWidth.filter(l => l.topY >= viewportHeight * 0.25);
+                    formattedLines = [...topFull, ...col1, ...col2, ...bottomFull];
+                }
+            }
+
+            return formattedLines;
+        }
+
+        function filterPdfHeadersAndFooters(pagesData) {
+            if (!pagesData || pagesData.length === 0) return [];
+
+            // Build multi-page running header and footer frequency map
+            const headerFrequency = new Map();
+            const footerFrequency = new Map();
+
+            pagesData.forEach(page => {
+                const h = page.viewportHeight || 800;
+                const topMarginLimit = h * 0.14;
+                const bottomMarginLimit = h * 0.86;
+
+                page.lines.forEach(line => {
+                    const norm = line.text.toLowerCase().replace(/[\d\W_]+/g, ' ').trim();
+                    if (norm.length >= 3 && norm.length <= 60) {
+                        if (line.topY <= topMarginLimit) {
+                            headerFrequency.set(norm, (headerFrequency.get(norm) || 0) + 1);
+                        } else if (line.topY >= bottomMarginLimit) {
+                            footerFrequency.set(norm, (footerFrequency.get(norm) || 0) + 1);
+                        }
+                    }
+                });
+            });
+
+            return pagesData.map(page => {
+                const h = page.viewportHeight || 800;
+                const topHeaderZone = h * 0.11;       // Top 11%
+                const bottomFooterZone = h * 0.89;    // Bottom 11%
+
+                // Estimate median body font size for footnote detection
+                const bodyLines = page.lines.filter(l => l.topY > topHeaderZone && l.topY < bottomFooterZone && l.text.length > 20);
+                const fontSizes = bodyLines.map(l => l.fontSize).sort((a, b) => a - b);
+                const medianBodyFont = fontSizes.length > 0 ? fontSizes[Math.floor(fontSizes.length / 2)] : 12;
+
+                const cleanLines = page.lines.filter(line => {
+                    const isTop = line.topY <= topHeaderZone;
+                    const isBottom = line.topY >= bottomFooterZone;
+                    const norm = line.text.toLowerCase().replace(/[\d\W_]+/g, ' ').trim();
+
+                    // 1. Standalone page numbers in top 15% or bottom 15%
+                    if ((line.topY <= h * 0.15 || line.topY >= h * 0.85) && isPdfStandalonePageNumberOrHeader(line.text)) {
+                        return false;
+                    }
+
+                    // 2. Repeated running headers / footers across multiple pages
+                    if (isTop && headerFrequency.get(norm) >= 2) {
+                        return false;
+                    }
+                    if (isBottom && footerFrequency.get(norm) >= 2) {
+                        return false;
+                    }
+
+                    // 3. Publisher, URL, or copyright watermarks in bottom margin
+                    if (isBottom) {
+                        const lower = line.text.toLowerCase();
+                        if (
+                            lower.includes('www.') ||
+                            lower.includes('http') ||
+                            lower.includes('all rights reserved') ||
+                            lower.includes('copyright') ||
+                            lower.includes('isbn') ||
+                            lower.includes('printed in') ||
+                            lower.includes('downloaded from')
+                        ) {
+                            return false;
+                        }
+                    }
+
+                    // 4. Footnote filtering in bottom 14% (smaller font or starting with footnote indicators)
+                    if (line.topY >= h * 0.86) {
+                        const isFootnotePrefix = /^(?:\[\d+\]|\(\d+\)|\d+\.|\*|†|‡)\s+/.test(line.text);
+                        const isSmallerFont = line.fontSize <= medianBodyFont * 0.85;
+                        if (isFootnotePrefix || (isSmallerFont && line.text.length < 100)) {
+                            return false;
+                        }
+                    }
+
+                    return true;
+                });
+
+                return {
+                    pageNumber: page.pageNumber,
+                    viewportHeight: page.viewportHeight,
+                    viewportWidth: page.viewportWidth,
+                    lines: cleanLines
+                };
+            });
+        }
+
+        function assemblePdfParagraphs(filteredPages) {
+            if (!filteredPages || filteredPages.length === 0) return [];
+
+            const allLines = [];
+            filteredPages.forEach((page, pIdx) => {
+                page.lines.forEach((line, lIdx) => {
+                    allLines.push({
+                        ...line,
+                        pageIndex: pIdx,
+                        isFirstLineOfPage: lIdx === 0,
+                        isLastLineOfPage: lIdx === page.lines.length - 1
+                    });
+                });
+            });
+
+            if (allLines.length === 0) return [];
+
+            // Calculate document typography statistics
+            const bodyLines = allLines.filter(l => l.text.length > 25);
+            const leftCoords = bodyLines.map(l => l.x).sort((a, b) => a - b);
+            const rightCoords = bodyLines.map(l => l.right).sort((a, b) => a - b);
+
+            const medianLeft = leftCoords.length > 0 ? leftCoords[Math.floor(leftCoords.length / 2)] : 50;
+            const medianRight = rightCoords.length > 0 ? rightCoords[Math.floor(rightCoords.length / 2)] : 550;
+
+            const verticalGaps = [];
+            for (let i = 1; i < allLines.length; i++) {
+                const prev = allLines[i - 1];
+                const curr = allLines[i];
+                if (prev.pageIndex === curr.pageIndex) {
+                    const gap = curr.topY - prev.topY;
+                    if (gap > 3 && gap < 45) {
+                        verticalGaps.push(gap);
+                    }
+                }
+            }
+            verticalGaps.sort((a, b) => a - b);
+            const medianLineSpacing = verticalGaps.length > 0 ? verticalGaps[Math.floor(verticalGaps.length / 2)] : 14;
+
+            const paragraphs = [];
+            let currentParagraphText = '';
+            let prevLine = null;
+
+            for (let i = 0; i < allLines.length; i++) {
+                let currLine = allLines[i];
+
+                // Drop Cap merging: e.g. line i is "O", and line i+1 is "nce upon a time..."
+                if (
+                    currLine.text.length === 1 &&
+                    /[A-Z]/.test(currLine.text) &&
+                    i + 1 < allLines.length
+                ) {
+                    const nextLine = allLines[i + 1];
+                    if (
+                        nextLine.pageIndex === currLine.pageIndex &&
+                        Math.abs(nextLine.topY - currLine.topY) <= currLine.fontSize * 1.5 &&
+                        /^[a-z]/.test(nextLine.text)
+                    ) {
+                        nextLine.text = currLine.text + nextLine.text;
+                        continue;
+                    }
+                }
+
+                if (!currentParagraphText) {
+                    currentParagraphText = currLine.text;
+                    prevLine = currLine;
+                    continue;
+                }
+
+                let isNewParagraph = false;
+                const samePage = prevLine.pageIndex === currLine.pageIndex;
+                const lineSpacing = samePage ? (currLine.topY - prevLine.topY) : medianLineSpacing;
+                const isIndented = currLine.x > medianLeft + 10;
+                const prevLineShort = prevLine.right < medianRight - 22;
+                const prevEndsTerminalPunctuation = /[.!?…]["'”’]?$/.test(prevLine.text);
+
+                // Heading / Chapter title detection
+                const isHeadingPattern = /^(?:chapter|part|book|section|prologue|epilogue|act|scene)\b/i.test(currLine.text) ||
+                                        (currLine.fontSize >= prevLine.fontSize * 1.25 && currLine.text.length < 80);
+
+                // Dialogue or list item
+                const startsWithQuote = /^["'“‘—–]/.test(currLine.text);
+                const startsWithBullet = /^[-•*]\s+/.test(currLine.text) || /^\d+\.\s+/.test(currLine.text);
+
+                if (samePage) {
+                    if (isHeadingPattern) {
+                        isNewParagraph = true;
+                    } else if (lineSpacing >= medianLineSpacing * 1.45) {
+                        // Clear vertical paragraph break
+                        isNewParagraph = true;
+                    } else if (isIndented && prevEndsTerminalPunctuation) {
+                        // Indented opening line of a new paragraph
+                        isNewParagraph = true;
+                    } else if (prevLineShort && prevEndsTerminalPunctuation) {
+                        // Previous paragraph completed short of right margin
+                        isNewParagraph = true;
+                    } else if ((startsWithQuote || startsWithBullet) && prevEndsTerminalPunctuation) {
+                        // Dialogue speaker turn or list bullet
+                        isNewParagraph = true;
+                    }
+                } else {
+                    // Seamless Cross-Page Paragraph Stitching:
+                    if (isHeadingPattern) {
+                        isNewParagraph = true;
+                    } else if (prevEndsTerminalPunctuation && isIndented) {
+                        isNewParagraph = true;
+                    } else if (prevLine.text.endsWith('-') || prevLine.text.endsWith('–')) {
+                        // Hyphenated word across page boundary -> continue
+                        isNewParagraph = false;
+                    } else if (!prevEndsTerminalPunctuation) {
+                        // Sentence continues across page boundary -> seamlessly continue
+                        isNewParagraph = false;
+                    } else if (/^[a-z]/.test(currLine.text)) {
+                        // Starts with lowercase letter -> continue
+                        isNewParagraph = false;
+                    } else if (prevEndsTerminalPunctuation && !isIndented && prevLineShort) {
+                        isNewParagraph = true;
+                    } else {
+                        isNewParagraph = false;
+                    }
+                }
+
+                if (isNewParagraph) {
+                    paragraphs.push(currentParagraphText.trim());
+                    currentParagraphText = currLine.text;
+                } else {
+                    // Merge into current paragraph with intelligent de-hyphenation
+                    if (currentParagraphText.endsWith('-') || currentParagraphText.endsWith('–')) {
+                        const lastWordMatch = currentParagraphText.match(/([a-zA-Z]+)[-–]$/);
+                        const firstWordMatch = currLine.text.match(/^([a-zA-Z]+)/);
+
+                        if (lastWordMatch && firstWordMatch && /^[a-z]/.test(firstWordMatch[1])) {
+                            // Split word across line break -> merge together without hyphen (e.g. "exam-" + "ining" -> "examining")
+                            currentParagraphText = currentParagraphText.slice(0, -1) + currLine.text;
+                        } else {
+                            // Compound capitalized word or separator (e.g. "Anglo-" + "Saxon")
+                            currentParagraphText = currentParagraphText + currLine.text;
+                        }
+                    } else {
+                        currentParagraphText += ' ' + currLine.text;
+                    }
+                }
+
+                prevLine = currLine;
+            }
+
+            if (currentParagraphText && currentParagraphText.trim()) {
+                paragraphs.push(currentParagraphText.trim());
+            }
+
+            return paragraphs;
+        }
+
         async function extractPdfFile(fileOrBlob) {
             const arrayBuffer = await fileOrBlob.arrayBuffer();
             const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-            let fullText = '';
+            const pagesData = [];
 
             for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
-                setStatus(`Extracting PDF page ${pageNum} of ${pdf.numPages}...`, 'playing');
+                const pct = Math.round((pageNum / pdf.numPages) * 100);
+                setStatus(`Extracting PDF page ${pageNum} of ${pdf.numPages} (${pct}%)...`, 'playing');
                 const page = await pdf.getPage(pageNum);
-                const textContent = await page.getTextContent();
-                let lastY = null;
-                let pageText = '';
+                const viewport = page.getViewport({ scale: 1.0 });
+                const textContent = await page.getTextContent({ normalizeWhitespace: true });
 
-                for (const item of textContent.items) {
-                    const currentY = item.transform ? item.transform[5] : null;
-                    if (lastY !== null && currentY !== null && Math.abs(currentY - lastY) > 10) {
-                        pageText += '\n';
-                    } else if (pageText && !pageText.endsWith(' ') && !pageText.endsWith('\n')) {
-                        pageText += ' ';
-                    }
-                    pageText += item.str;
-                    lastY = currentY;
-                }
-
-                // Group lines into clean paragraphs
-                const cleanedPage = pageText
-                    .replace(/\n{2,}/g, '\n\n')
-                    .trim();
-
-                if (cleanedPage) {
-                    fullText += cleanedPage + '\n\n';
-                }
+                const lines = groupPageItemsIntoLines(textContent.items, viewport.height, viewport.width);
+                pagesData.push({
+                    pageNumber: pageNum,
+                    viewportHeight: viewport.height,
+                    viewportWidth: viewport.width,
+                    lines: lines
+                });
             }
-            return fullText;
+
+            setStatus('Formatting paragraphs and removing headers & footers...', 'playing');
+
+            // 1. Filter out running headers, footers, page numbers, and footnotes
+            const cleanPages = filterPdfHeadersAndFooters(pagesData);
+
+            // 2. Intelligently assemble proper EPUB-style paragraphs
+            const paragraphs = assemblePdfParagraphs(cleanPages);
+
+            // 3. Return clean continuous paragraphs separated by double newline
+            return paragraphs
+                .map(p => cleanPdfTypography(p))
+                .filter(p => p.length > 0)
+                .join('\n\n');
         }
 
         // 8. MP3 Conversion Service (Cloud TTS Merger + LameJS WebAudio Recorder)
