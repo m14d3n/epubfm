@@ -71,15 +71,12 @@
             transform: rotate(-90deg);
         }
 
-        /* Combined Header & Collapsible Audio Deck */
-        #audio-deck.is-collapsed #audio-deck-body {
+        /* Combined Header Audio Deck (Row 2 Primary Player) */
+        #audio-deck #audio-deck-body {
+            display: block !important;
+        }
+        #audio-deck-mini {
             display: none !important;
-        }
-        #audio-deck.is-collapsed #audio-deck-mini {
-            display: flex !important;
-        }
-        #audio-deck.is-collapsed #collapse-audio-icon {
-            transform: rotate(180deg);
         }
 
         /* Combined Header Panels Drawer */
@@ -106,10 +103,6 @@
                 padding: 1.15rem !important;
                 font-size: 1.05rem !important;
                 line-height: 1.75 !important;
-            }
-            body.deck-collapsed #reader-display {
-                height: calc(100vh - 150px);
-                max-height: calc(100vh - 150px);
             }
         }
 
@@ -424,88 +417,90 @@
 
     <!-- Master Combined Header, Controls & Panels Center -->
     <header id="app-header" class="bg-slate-900/95 backdrop-blur border-b border-slate-800 sticky top-0 z-30 transition-all duration-300">
-        <!-- Top Row: Branding, Book Title, Panel Toggles & Utilities -->
-        <div class="px-3 sm:px-6 py-2 sm:py-2.5 border-b border-slate-800/80">
-            <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
+        <!-- Top Row: Branding, Book Title, Panel Toggles & Utilities (Strictly Single Row) -->
+        <div class="px-3 sm:px-6 py-2 border-b border-slate-800/80">
+            <div class="max-w-7xl mx-auto flex items-center justify-between gap-2 flex-nowrap">
                 <!-- Brand & Active Book Title -->
-                <div class="flex items-center space-x-2.5 min-w-0">
+                <div class="flex items-center space-x-2 sm:space-x-2.5 min-w-0 shrink">
                     <img src="icon-192.png" alt="epubfm logo" class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl shadow-lg shadow-indigo-500/20 object-cover border border-slate-700/50 shrink-0">
                     <div class="min-w-0">
                         <div class="flex items-center gap-1.5">
                             <h1 class="text-base sm:text-lg font-bold bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">epubfm</h1>
                             <span class="text-[10px] font-semibold uppercase tracking-wider px-1.5 py-0.5 bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 rounded-full hidden sm:inline-block">Audiobook</span>
                         </div>
-                        <p id="book-title-display" class="text-xs text-slate-400 truncate max-w-[130px] xs:max-w-[180px] sm:max-w-xs md:max-w-md" title="No book loaded">No book loaded</p>
+                        <p id="book-title-display" class="text-xs text-slate-400 truncate max-w-[120px] xs:max-w-[160px] sm:max-w-[220px] md:max-w-xs lg:max-w-sm" title="No book loaded">No book loaded</p>
                     </div>
                 </div>
 
-                <!-- Panel Tab Toggles (Part of combined header & controls) -->
-                <div class="flex items-center gap-1 sm:gap-1.5 overflow-x-auto no-scrollbar py-0.5">
+                <!-- Combined Header Actions: Panel Tabs & Utilities -->
+                <div class="flex items-center gap-1 sm:gap-1.5 shrink-0 overflow-x-auto no-scrollbar py-0.5">
+                    <!-- Panel Tab Toggles -->
                     <button id="tab-btn-library" class="panel-tab-btn bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700/80 px-2 sm:px-2.5 py-1.5 rounded-xl text-xs font-medium transition flex items-center gap-1.5 shrink-0 shadow-sm" title="Toggle Local Library">
                         <svg class="w-3.5 h-3.5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
-                        <span>Library</span>
+                        <span class="hidden sm:inline">Library</span>
                         <span id="library-count-badge" class="text-[10px] bg-indigo-500/30 text-indigo-200 border border-indigo-500/40 px-1.5 py-0.2 rounded-full font-semibold">0</span>
                     </button>
 
                     <button id="tab-btn-history" class="panel-tab-btn bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700/80 px-2 sm:px-2.5 py-1.5 rounded-xl text-xs font-medium transition flex items-center gap-1.5 shrink-0 shadow-sm" title="Toggle Play History & Bookmarks">
                         <svg class="w-3.5 h-3.5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        <span>History</span>
+                        <span class="hidden sm:inline">History</span>
                     </button>
 
                     <button id="tab-btn-editor" class="panel-tab-btn bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700/80 px-2 sm:px-2.5 py-1.5 rounded-xl text-xs font-medium transition flex items-center gap-1.5 shrink-0 shadow-sm" title="Toggle Raw Text / Editor">
                         <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
-                        <span>Editor</span>
+                        <span class="hidden sm:inline">Editor</span>
                     </button>
 
                     <button id="tab-btn-audio-settings" class="panel-tab-btn bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700/80 px-2 sm:px-2.5 py-1.5 rounded-xl text-xs font-medium transition flex items-center gap-1.5 shrink-0 shadow-sm" title="Narrator Voice & Speed Settings">
                         <svg class="w-3.5 h-3.5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
-                        <span class="hidden sm:inline">Voice & Tuning</span>
-                        <span class="sm:hidden">Voice</span>
+                        <span class="hidden xl:inline">Voice & Tuning</span>
+                        <span class="hidden sm:inline xl:hidden">Voice</span>
                     </button>
-                </div>
 
-                <!-- Utilities (Upload, MP3, Theme, Zen, Collapse Controls) -->
-                <div class="flex items-center gap-1.5 shrink-0">
-                    <label class="bg-indigo-600 hover:bg-indigo-500 text-white px-2.5 sm:px-3 py-1.5 rounded-xl cursor-pointer text-xs font-medium transition shadow-sm flex items-center gap-1" title="Upload EPUB / PDF / TXT">
+                    <div class="h-4 w-px bg-slate-800 hidden sm:block mx-0.5"></div>
+
+                    <!-- Utilities -->
+                    <label class="bg-indigo-600 hover:bg-indigo-500 text-white px-2 sm:px-2.5 py-1.5 rounded-xl cursor-pointer text-xs font-medium transition shadow-sm flex items-center gap-1 shrink-0" title="Upload EPUB / PDF / TXT">
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
-                        <span class="hidden md:inline">Upload</span>
+                        <span class="hidden lg:inline">Upload</span>
                         <input type="file" id="file-upload" accept=".epub,.pdf,.txt" class="hidden">
                     </label>
 
-                    <button id="open-mp3-modal-btn" class="bg-emerald-600/90 hover:bg-emerald-500 text-white px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-medium transition shadow-sm flex items-center gap-1" title="Convert to MP3">
+                    <button id="open-mp3-modal-btn" class="bg-emerald-600/90 hover:bg-emerald-500 text-white px-2 sm:px-2.5 py-1.5 rounded-xl text-xs font-medium transition shadow-sm flex items-center gap-1 shrink-0" title="Convert to MP3">
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>
-                        <span class="hidden md:inline">MP3</span>
+                        <span class="hidden lg:inline">MP3</span>
                     </button>
 
-                    <button id="theme-toggle-btn" class="bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 px-2 py-1.5 rounded-xl text-xs font-medium transition flex items-center gap-1" title="Toggle Theme (Hotkey: T)">
+                    <button id="theme-toggle-btn" class="bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 px-2 py-1.5 rounded-xl text-xs font-medium transition flex items-center justify-center shrink-0" title="Toggle Theme (Hotkey: T)">
                         <svg id="theme-icon-sun" class="w-3.5 h-3.5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                         <svg id="theme-icon-moon" class="w-3.5 h-3.5 text-indigo-500 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
-                        <span id="theme-label" class="hidden xl:inline">Light Mode</span>
+                        <span id="theme-label" class="sr-only">Toggle Theme</span>
                     </button>
 
-                    <button id="zen-mode-btn" class="bg-slate-800 hover:bg-slate-700 text-indigo-300 border border-slate-700 px-2 py-1.5 rounded-xl text-xs font-medium transition flex items-center gap-1" title="Zen Reading Mode (Hotkey: Z)">
+                    <button id="zen-mode-btn" class="bg-slate-800 hover:bg-slate-700 text-indigo-300 border border-slate-700 px-2 py-1.5 rounded-xl text-xs font-medium transition flex items-center justify-center shrink-0" title="Zen Reading Mode (Hotkey: Z)">
                         <svg class="w-3.5 h-3.5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path></svg>
-                        <span id="zen-btn-label" class="hidden xl:inline">Zen Mode</span>
+                        <span id="zen-btn-label" class="sr-only">Zen Mode</span>
                     </button>
 
-                    <button id="pwa-install-btn" class="hidden bg-slate-800 hover:bg-slate-700 text-indigo-300 border border-slate-700 px-2 py-1.5 rounded-xl text-xs font-medium transition items-center gap-1" title="Install App">
+                    <button id="pwa-install-btn" class="hidden bg-slate-800 hover:bg-slate-700 text-indigo-300 border border-slate-700 px-2 py-1.5 rounded-xl text-xs font-medium transition items-center gap-1 shrink-0" title="Install App">
                         <svg class="w-3.5 h-3.5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                        <span class="hidden sm:inline">Install</span>
+                        <span class="sr-only sm:not-sr-only sm:inline text-xs">Install</span>
                     </button>
 
-                    <button id="collapse-audio-btn" class="text-slate-400 hover:text-white text-xs flex items-center gap-1 py-1.5 px-2 rounded-xl bg-slate-800/80 hover:bg-slate-700 border border-slate-700/60 transition" title="Collapse / Expand Controls">
-                        <span id="collapse-audio-label" class="hidden lg:inline">Collapse Controls</span>
-                        <svg id="collapse-audio-icon" class="w-3.5 h-3.5 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
+                    <!-- Hidden element to preserve DOM ID compatibility -->
+                    <button id="collapse-audio-btn" class="hidden" title="Collapse / Expand Controls">
+                        <span id="collapse-audio-label"></span>
+                        <svg id="collapse-audio-icon" class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
                     </button>
                 </div>
             </div>
         </div>
 
         <!-- Master Audio Transport & Progress Deck (Second Header Row) -->
-        <section id="audio-deck" class="transition-all duration-300">
+        <section id="audio-deck" class="transition-all duration-300 border-b border-slate-800/80">
             <!-- Full Controls Body: Play Button + Paragraph # + Estimated Time + Scrubber -->
             <div id="audio-deck-body" class="px-3 sm:px-6 py-2 max-w-7xl mx-auto space-y-1.5">
-                <div class="flex flex-wrap items-center justify-between gap-2 sm:gap-3">
+                <div class="flex flex-wrap sm:flex-nowrap items-center justify-between gap-2 sm:gap-3">
                     <!-- Left: Transport Buttons with Primary Play Button -->
                     <div class="flex items-center space-x-1 sm:space-x-1.5 shrink-0">
                         <button id="prev-btn" class="p-1.5 sm:p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition" title="Previous Paragraph">
@@ -560,24 +555,13 @@
                 </div>
             </div>
 
-            <!-- Collapsed Mini Transport Bar -->
-            <div id="audio-deck-mini" class="hidden px-3 sm:px-6 py-2 items-center justify-between gap-3 text-xs bg-slate-900/60 max-w-7xl mx-auto">
-                <div class="flex items-center space-x-2">
-                    <button id="mini-prev-btn" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300" title="Previous Paragraph">
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
-                    </button>
-                    <button id="mini-play-btn" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1 rounded-lg font-semibold flex items-center space-x-1.5 transition shadow-sm">
-                        <svg id="mini-play-icon" class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg>
-                        <span id="mini-play-text">Play</span>
-                    </button>
-                    <button id="mini-next-btn" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300" title="Next Paragraph">
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                    </button>
-                </div>
-                <div class="flex items-center space-x-3 text-slate-400">
-                    <span id="mini-pos-display" class="font-medium text-indigo-300">Paragraph 0 of 0</span>
-                    <span id="mini-time-display" class="hidden sm:inline">0 mins left</span>
-                </div>
+            <!-- Hidden Mini Transport Bar to preserve DOM IDs -->
+            <div id="audio-deck-mini" class="hidden" style="display: none !important;">
+                <button id="mini-prev-btn"></button>
+                <button id="mini-play-btn"><svg id="mini-play-icon"></svg><span id="mini-play-text"></span></button>
+                <button id="mini-next-btn"></button>
+                <span id="mini-pos-display"></span>
+                <span id="mini-time-display"></span>
             </div>
         </section>
 
@@ -2066,6 +2050,8 @@
                 const raw = localStorage.getItem(STORAGE_KEY_UI_STATE);
                 if (raw) Object.assign(uiState, JSON.parse(raw));
             } catch (e) {}
+            // Row 2 is the primary audio playback deck; keep it permanently active and expanded
+            uiState.audioCollapsed = false;
             applyUIState();
         }
 
@@ -2076,17 +2062,11 @@
         }
 
         function applyUIState() {
-            // Audio Deck
+            // Audio Deck (Row 2 primary playback deck)
             if (audioDeck) {
-                if (uiState.audioCollapsed) {
-                    audioDeck.classList.add('is-collapsed');
-                    document.body.classList.add('deck-collapsed');
-                    if (collapseAudioLabel) collapseAudioLabel.textContent = 'Expand Controls';
-                } else {
-                    audioDeck.classList.remove('is-collapsed');
-                    document.body.classList.remove('deck-collapsed');
-                    if (collapseAudioLabel) collapseAudioLabel.textContent = 'Collapse Controls';
-                }
+                audioDeck.classList.remove('is-collapsed');
+                document.body.classList.remove('deck-collapsed');
+                if (collapseAudioLabel) collapseAudioLabel.textContent = 'Collapse Controls';
             }
 
             // Sidebar / Panels
@@ -2099,8 +2079,7 @@
         }
 
         function toggleAudioDeck(force) {
-            const next = typeof force === 'boolean' ? force : !uiState.audioCollapsed;
-            uiState.audioCollapsed = next;
+            uiState.audioCollapsed = false;
             saveUIState();
             applyUIState();
             if (typeof updateReaderHeight === 'function') {
