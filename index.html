@@ -93,27 +93,23 @@
             }
         }
 
-        /* Responsive Reader Display Height */
+        /* Reader Display Height Optimization */
         #reader-display {
-            height: calc(100vh - 215px);
-            max-height: calc(100vh - 215px);
-            transition: height 0.25s ease, max-height 0.25s ease;
+            min-height: 550px;
+            transition: height 0.15s ease, max-height 0.15s ease;
         }
-        body.deck-collapsed #reader-display {
-            height: calc(100vh - 145px);
-            max-height: calc(100vh - 145px);
-        }
-        @media (max-width: 640px) {
+        @media (max-width: 767px) {
             #reader-display {
-                height: calc(100vh - 235px);
-                max-height: calc(100vh - 235px);
+                min-height: 360px;
+                height: calc(100vh - 215px);
+                max-height: calc(100vh - 215px);
                 padding: 1.15rem !important;
                 font-size: 1.05rem !important;
                 line-height: 1.75 !important;
             }
             body.deck-collapsed #reader-display {
-                height: calc(100vh - 165px);
-                max-height: calc(100vh - 165px);
+                height: calc(100vh - 150px);
+                max-height: calc(100vh - 150px);
             }
         }
 
@@ -151,9 +147,6 @@
         }
         body.zen-mode #zen-floating-player {
             display: flex !important;
-        }
-        body.zen-mode #expand-sidebar-btn {
-            display: none !important;
         }
 
         /* ==========================================
@@ -289,11 +282,6 @@
         body.theme-light .playing-para {
             background-color: rgba(99, 102, 241, 0.09) !important;
             border-left-color: #4f46e5 !important;
-        }
-        body.theme-light #expand-sidebar-btn {
-            background-color: #ffffff !important;
-            border-color: #cbd5e1 !important;
-            color: #4f46e5 !important;
         }
 
         /* Panels and Sidebar in Light Mode */
@@ -513,60 +501,62 @@
             </div>
         </div>
 
-        <!-- Master Audio Transport & Progress Deck (Combined into Header) -->
+        <!-- Master Audio Transport & Progress Deck (Second Header Row) -->
         <section id="audio-deck" class="transition-all duration-300">
-            <!-- Full Controls Body -->
-            <div id="audio-deck-body" class="px-3 sm:px-6 py-2 sm:py-2.5 space-y-2 max-w-7xl mx-auto">
-                <!-- Interactive Progress Scrubber Row -->
-                <div class="space-y-1">
-                    <div class="flex justify-between items-center text-[11px] sm:text-xs text-slate-400">
-                        <div class="flex items-center space-x-2">
-                            <span id="current-pos-display" class="font-semibold text-indigo-400">Paragraph 0 of 0 (0%)</span>
-                            <span class="text-slate-600 hidden xs:inline">•</span>
-                            <div class="flex items-center space-x-1.5">
-                                <span id="status-dot" class="w-2 h-2 rounded-full bg-emerald-400 shrink-0"></span>
-                                <span id="status-bar" class="truncate max-w-[130px] xs:max-w-[200px] sm:max-w-md text-slate-300">Ready to play.</span>
-                            </div>
-                        </div>
-                        <span id="est-time-display" class="shrink-0 text-slate-400 font-medium">0 mins left</span>
-                    </div>
-                    <input type="range" id="progress-scrubber" min="0" max="1" value="0" step="1" class="w-full accent-indigo-500 h-2 bg-slate-800 rounded-lg cursor-pointer">
-                </div>
-
-                <!-- Transport Controls Row: Prev, Play/Pause, Next, Stop, Bookmark, Jump -->
-                <div class="flex flex-wrap items-center justify-between gap-2 pt-0.5">
-                    <div class="flex items-center space-x-1.5 sm:space-x-2">
-                        <button id="prev-btn" class="p-2 sm:p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition" title="Previous Paragraph">
-                            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+            <!-- Full Controls Body: Play Button + Paragraph # + Estimated Time + Scrubber -->
+            <div id="audio-deck-body" class="px-3 sm:px-6 py-2 max-w-7xl mx-auto space-y-1.5">
+                <div class="flex flex-wrap items-center justify-between gap-2 sm:gap-3">
+                    <!-- Left: Transport Buttons with Primary Play Button -->
+                    <div class="flex items-center space-x-1 sm:space-x-1.5 shrink-0">
+                        <button id="prev-btn" class="p-1.5 sm:p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition" title="Previous Paragraph">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
                         </button>
 
-                        <button id="play-btn" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 sm:px-6 py-1.5 sm:py-2 rounded-xl font-semibold flex items-center space-x-1.5 sm:space-x-2 shadow-lg shadow-indigo-600/30 transition text-xs sm:text-sm" title="Play / Pause (Space)">
-                            <svg id="play-icon" class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg>
+                        <button id="play-btn" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3.5 sm:px-5 py-1.5 rounded-xl font-semibold flex items-center space-x-1.5 shadow-md shadow-indigo-600/30 transition text-xs sm:text-sm shrink-0" title="Play / Pause (Space)">
+                            <svg id="play-icon" class="w-4 h-4 sm:w-4.5 sm:h-4.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg>
                             <span id="play-text">Play</span>
                         </button>
 
-                        <button id="next-btn" class="p-2 sm:p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition" title="Next Paragraph">
-                            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        <button id="next-btn" class="p-1.5 sm:p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition" title="Next Paragraph">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                         </button>
 
-                        <button id="stop-btn" class="bg-rose-600/20 hover:bg-rose-600 border border-rose-500/30 text-rose-300 hover:text-white px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-medium transition" title="Stop Playback">
+                        <button id="stop-btn" class="bg-rose-600/20 hover:bg-rose-600 border border-rose-500/30 text-rose-300 hover:text-white px-2.5 py-1.5 rounded-xl text-xs font-medium transition" title="Stop Playback">
                             Stop
                         </button>
 
-                        <button id="bookmark-btn" class="bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-300 px-2 sm:px-2.5 py-1.5 sm:py-2 rounded-xl text-xs font-medium transition flex items-center space-x-1" title="Save current position to history">
+                        <button id="bookmark-btn" class="bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-300 px-2 py-1.5 rounded-xl text-xs font-medium transition flex items-center space-x-1" title="Save current position to history">
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
-                            <span class="hidden sm:inline">Bookmark</span>
+                            <span class="hidden md:inline">Bookmark</span>
                         </button>
                     </div>
 
-                    <!-- Quick Jump to Paragraph -->
-                    <div class="flex items-center space-x-1.5 text-xs">
-                        <span class="text-slate-400 text-[11px] hidden xs:inline">Jump:</span>
-                        <input type="number" id="jump-input" min="1" value="1" class="w-16 sm:w-20 bg-slate-800 border border-slate-700 rounded-xl px-2 py-1 text-xs text-white focus:outline-none focus:border-indigo-500" placeholder="Para #">
-                        <button id="jump-btn" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-indigo-300 px-2.5 py-1 rounded-xl text-xs font-semibold transition shrink-0">
-                            Go
-                        </button>
+                    <!-- Center: Paragraph # + Live Status -->
+                    <div class="flex items-center space-x-2 text-[11px] sm:text-xs min-w-0">
+                        <span id="current-pos-display" class="font-semibold text-indigo-400 whitespace-nowrap">Paragraph 0 of 0 (0%)</span>
+                        <span class="text-slate-600 hidden md:inline">•</span>
+                        <div class="hidden md:flex items-center space-x-1.5 min-w-0">
+                            <span id="status-dot" class="w-2 h-2 rounded-full bg-emerald-400 shrink-0"></span>
+                            <span id="status-bar" class="truncate max-w-[120px] lg:max-w-[200px] text-slate-300">Ready to play.</span>
+                        </div>
                     </div>
+
+                    <!-- Right: Estimated Time Remaining & Jump to Paragraph -->
+                    <div class="flex items-center space-x-2.5 text-xs shrink-0">
+                        <span id="est-time-display" class="text-slate-400 font-medium whitespace-nowrap">0 mins left</span>
+
+                        <div class="hidden sm:flex items-center space-x-1">
+                            <input type="number" id="jump-input" min="1" value="1" class="w-16 bg-slate-800 border border-slate-700 rounded-lg px-2 py-1 text-xs text-white focus:outline-none focus:border-indigo-500" placeholder="Para #">
+                            <button id="jump-btn" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-indigo-300 px-2 py-1 rounded-lg text-xs font-semibold transition shrink-0">
+                                Go
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Scrubber Slider -->
+                <div class="w-full pt-0.5">
+                    <input type="range" id="progress-scrubber" min="0" max="1" value="0" step="1" class="w-full accent-indigo-500 h-1.5 bg-slate-800 rounded-lg cursor-pointer">
                 </div>
             </div>
 
@@ -745,18 +735,10 @@
                         <span class="text-xs text-slate-500 hidden sm:inline">(Click any paragraph to play from there)</span>
                     </div>
 
-                    <div class="flex items-center gap-2 w-full sm:w-auto">
-                        <!-- Search within book -->
-                        <div class="relative flex-1 sm:w-64">
-                            <input type="text" id="reader-search" placeholder="Filter or find text..." class="w-full bg-slate-900 border border-slate-800 rounded-xl pl-8 pr-3 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-indigo-500">
-                            <svg class="w-3.5 h-3.5 text-slate-500 absolute left-2.5 top-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                        </div>
-
-                        <!-- Button to open panels drawer -->
-                        <button id="expand-sidebar-btn" class="text-xs text-indigo-400 hover:text-white bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-slate-700 px-3 py-1.5 rounded-xl transition flex items-center gap-1.5 shrink-0 shadow-sm" title="Open Library & Tools">
-                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
-                            <span>Panels</span>
-                        </button>
+                    <!-- Search within book -->
+                    <div class="relative w-full sm:w-64">
+                        <input type="text" id="reader-search" placeholder="Filter or find text..." class="w-full bg-slate-900 border border-slate-800 rounded-xl pl-8 pr-3 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-indigo-500">
+                        <svg class="w-3.5 h-3.5 text-slate-500 absolute left-2.5 top-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                     </div>
                 </div>
 
@@ -939,7 +921,6 @@
         const collapseAudioLabel = document.getElementById('collapse-audio-label');
         const sidebarColumn = document.getElementById('sidebar-column');
         const collapseSidebarBtn = document.getElementById('collapse-sidebar-btn');
-        const expandSidebarBtn = document.getElementById('expand-sidebar-btn');
         const zenModeBtn = document.getElementById('zen-mode-btn');
         const zenBtnLabel = document.getElementById('zen-btn-label');
         const zenFloatingPlayer = document.getElementById('zen-floating-player');
@@ -1295,9 +1276,11 @@
                     resumeParaLabel.textContent = `Paragraph #${saved.paraIndex + 1}`;
                     resumeSnippet.textContent = `"${saved.snippet}"`;
                     resumeBanner.classList.remove('hidden');
+                    if (typeof updateReaderHeight === 'function') requestAnimationFrame(updateReaderHeight);
                     resumeNowBtn.onclick = () => {
                         currentIndex = saved.paraIndex;
                         resumeBanner.classList.add('hidden');
+                        if (typeof updateReaderHeight === 'function') requestAnimationFrame(updateReaderHeight);
                         speakCurrentParagraph(true, 'Started');
                     };
                 }
@@ -1306,6 +1289,7 @@
 
         dismissResumeBtn.addEventListener('click', () => {
             resumeBanner.classList.add('hidden');
+            if (typeof updateReaderHeight === 'function') requestAnimationFrame(updateReaderHeight);
         });
 
         clearHistoryBtn.addEventListener('click', () => {
@@ -2109,6 +2093,9 @@
             if (uiState.sidebarCollapsed) {
                 closeHeaderPanels();
             }
+            if (typeof updateReaderHeight === 'function') {
+                requestAnimationFrame(updateReaderHeight);
+            }
         }
 
         function toggleAudioDeck(force) {
@@ -2116,6 +2103,9 @@
             uiState.audioCollapsed = next;
             saveUIState();
             applyUIState();
+            if (typeof updateReaderHeight === 'function') {
+                requestAnimationFrame(updateReaderHeight);
+            }
         }
 
         if (collapseAudioBtn) collapseAudioBtn.addEventListener('click', () => toggleAudioDeck());
@@ -2168,6 +2158,7 @@
                     }
                 }
             });
+            requestAnimationFrame(updateReaderHeight);
         }
 
         function closeHeaderPanels() {
@@ -2183,6 +2174,7 @@
                     tab.classList.add('bg-slate-800', 'text-slate-300');
                 }
             });
+            requestAnimationFrame(updateReaderHeight);
         }
 
         ['library', 'history', 'editor', 'audio-settings'].forEach(key => {
@@ -2201,7 +2193,6 @@
         }
 
         if (collapseSidebarBtn) collapseSidebarBtn.addEventListener('click', () => toggleSidebar(true));
-        if (expandSidebarBtn) expandSidebarBtn.addEventListener('click', () => toggleSidebar(false));
 
         // Toggle Individual Panels inside header drawer
         document.querySelectorAll('.panel-card').forEach(panel => {
@@ -2214,9 +2205,69 @@
                     const key = id === 'panel-library' ? 'panelLibrary' : id === 'panel-history' ? 'panelHistory' : 'panelEditor';
                     uiState[key] = panel.classList.contains('is-collapsed');
                     saveUIState();
+                    requestAnimationFrame(updateReaderHeight);
                 });
             }
         });
+
+        // ========================================================
+        // Responsive Desktop Reader Height Calculation
+        // Prevents browser vertical scrolling on desktop while
+        // maintaining 550px as minimal height (only then browser scrolls)
+        // ========================================================
+        function updateReaderHeight() {
+            const readerDisplay = document.getElementById('reader-display');
+            if (!readerDisplay) return;
+
+            // In Zen mode, zen styles handle full screen height
+            if (document.body.classList.contains('zen-mode')) {
+                readerDisplay.style.height = '';
+                readerDisplay.style.maxHeight = '';
+                readerDisplay.style.minHeight = '';
+                return;
+            }
+
+            if (window.innerWidth >= 768) {
+                // Calculate exact top offset relative to document top
+                const rect = readerDisplay.getBoundingClientRect();
+                const scrollY = window.pageYOffset || document.documentElement.scrollTop || 0;
+                const topOffset = rect.top + scrollY;
+
+                // 24px bottom buffer matching main container bottom spacing
+                const bottomBuffer = 24;
+                const availableHeight = Math.floor(window.innerHeight - topOffset - bottomBuffer);
+
+                if (availableHeight >= 550) {
+                    // Fits cleanly in desktop viewport: reader scrolls internally, no browser vertical scrolling
+                    readerDisplay.style.height = `${availableHeight}px`;
+                    readerDisplay.style.maxHeight = `${availableHeight}px`;
+                    readerDisplay.style.minHeight = '550px';
+                } else {
+                    // Below 550px: clamp reader to 550px minimum, browser vertical scrolling activates
+                    readerDisplay.style.height = '550px';
+                    readerDisplay.style.maxHeight = '550px';
+                    readerDisplay.style.minHeight = '550px';
+                }
+            } else {
+                // Mobile devices: reset inline styles so responsive mobile CSS applies
+                readerDisplay.style.height = '';
+                readerDisplay.style.maxHeight = '';
+                readerDisplay.style.minHeight = '';
+            }
+        }
+
+        window.addEventListener('resize', updateReaderHeight);
+
+        // Automatically recalculate whenever header elements resize (e.g. controls or panels toggled)
+        if (window.ResizeObserver) {
+            const headerEl = document.getElementById('app-header');
+            if (headerEl) {
+                const headerObserver = new ResizeObserver(() => {
+                    requestAnimationFrame(updateReaderHeight);
+                });
+                headerObserver.observe(headerEl);
+            }
+        }
 
         // Master Zen Mode Toggle
         function toggleZenMode(enable) {
@@ -2238,6 +2289,7 @@
             }
             updateProgressUI();
             updatePlayButtonUI(isPlaying);
+            requestAnimationFrame(updateReaderHeight);
         }
 
         if (zenModeBtn) zenModeBtn.addEventListener('click', () => toggleZenMode());
@@ -3074,6 +3126,12 @@
         loadTheme();
         loadUIState();
         renderLibraryList();
+        if (typeof updateReaderHeight === 'function') {
+            requestAnimationFrame(updateReaderHeight);
+        }
+        window.addEventListener('load', () => {
+            if (typeof updateReaderHeight === 'function') requestAnimationFrame(updateReaderHeight);
+        });
 
         (async () => {
             const params = new URLSearchParams(window.location.search);
